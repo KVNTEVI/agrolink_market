@@ -2,76 +2,74 @@
 
 namespace App\Models;
 
-// Importe la classe de base Model d'Eloquent pour l'ORM.
-use Illuminate\Database\Eloquent\Model;
+// NOUVELLES IMPORTATIONS pour l'authentification et les notifications
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Modèle Eloquent pour la table 'utilisateurs'.
- * Représente un utilisateur, qu'il soit acheteur, producteur ou administrateur.
+ * Il hérite de 'Authenticatable' pour fonctionner avec le système de connexion de Laravel.
  */
-class Utilisateur extends Model
+class Utilisateur extends Authenticatable //  Hérite de la classe d'authentification
 {
-    // 1. Configuration de base de la table
-    
-    // Définit la clé primaire personnalisée de la table au lieu du défaut 'id'.
-    protected $primaryKey = 'id_utilisateur';
-    
-    // Protection contre l'affectation de masse (Mass Assignment).
-    // Ces colonnes peuvent être remplies via la méthode create() ou update().
-    protected $fillable = [
-        'nom','email','mot_de_passe','telephone','adresse','role_id'
-    ];
-    // Note : Pour la sécurité, 'mot_de_passe' devrait idéalement être géré séparément ou être masqué.
+    use Notifiable; // Permet d'envoyer des notifications (ex: réinitialisation de mot de passe)
 
-    // 2. Relations de l'utilisateur
+    // Indique à Eloquent d'utiliser la table 'utilisateurs'
+    protected $table = 'utilisateurs';
+    
+    // Définit la clé primaire personnalisée
+    protected $primaryKey = 'id_utilisateur';
+
+    // 1. Configuration des champs de la table
+    protected $fillable = [
+        'nom', 'email', 'password', 'telephone', 'adresse', 'role_id'
+    ];
+
+    // Champs qui ne DOIVENT PAS être affichés lorsque le modèle est converti en tableau ou JSON (sécurité)
+    protected $hidden = [
+        'password',
+        'remember_token' // Clé de sécurité utilisée pour la fonction "Se souvenir de moi"
+    ];
+
+    // 2. Relations de l'utilisateur (conservées de votre ancien code)
 
     /**
-     * Relation : Un Utilisateur appartient à UN Rôle. (One-to-One)
+     * Relation : L'utilisateur appartient à UN Rôle.
      */
     public function role()
     {
-        // Définit la relation Un-à-Un inverse (belongsTo).
-        // L'Utilisateur est lié au modèle Role via la clé étrangère 'role_id'.
         return $this->belongsTo(Role::class, 'role_id');
     }
 
     /**
-     * Relation (Spécifique au rôle Producteur) : Un Utilisateur peut avoir plusieurs Produits.
+     * Relation (Producteur) : Produits créés par cet utilisateur.
      */
     public function produits()
     {
-        // Définit la relation Un-à-Plusieurs (One-to-Many).
-        // Cela suppose que la table 'produits' contient une clé étrangère nommée 'producteur_id'.
         return $this->hasMany(Produit::class, 'producteur_id');
     }
 
     /**
-     * Relation (Spécifique au rôle Acheteur) : Un Utilisateur peut passer plusieurs Commandes.
+     * Relation (Acheteur) : Commandes passées par cet utilisateur.
      */
     public function commandes()
     {
-        // Définit la relation Un-à-Plusieurs (One-to-Many).
-        // Cela suppose que la table 'commandes' contient une clé étrangère nommée 'acheteur_id'.
         return $this->hasMany(Commande::class, 'acheteur_id');
     }
 
     /**
-     * Relation : Utilisateur en tant qu'Acheteur a plusieurs Conversations Initiées.
+     * Relation : Conversations où l'utilisateur est l'Acheteur.
      */
     public function conversationsAcheteur()
     {
-        // Définit la relation Un-à-Plusieurs sur la table 'conversations'.
-        // Elle utilise 'acheteur_id' comme clé étrangère.
         return $this->hasMany(Conversation::class, 'acheteur_id');
     }
 
     /**
-     * Relation : Utilisateur en tant que Producteur est impliqué dans plusieurs Conversations.
+     * Relation : Conversations où l'utilisateur est le Producteur.
      */
     public function conversationsProducteur()
     {
-        // Définit la relation Un-à-Plusieurs sur la table 'conversations'.
-        // Elle utilise 'producteur_id' comme clé étrangère.
         return $this->hasMany(Conversation::class, 'producteur_id');
     }
 }
