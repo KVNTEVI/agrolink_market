@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Auth;
 // Contrôleur de gestion des produits par le producteur connecté
 class ProduitController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth', 'producteur']);
+    }
     // Affiche la liste des produits créés UNIQUEMENT par l'utilisateur connecté. (READ)
     public function index()
     {

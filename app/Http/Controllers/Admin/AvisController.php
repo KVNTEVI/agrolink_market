@@ -6,8 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Avis; // Modèle de la table 'avis'
 
 // Contrôleur de gestion et de modération des avis clients (zone Admin)
-class ReviewController extends Controller
+class AvisController extends Controller
 {
+    // Applique les middlewares de sécurité.
+      public function __construct()
+    {
+        $this->middleware(['auth', 'admin']);
+    }
     // Affiche la liste de tous les avis. (READ)
     public function index()
     {

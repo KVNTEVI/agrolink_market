@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth; // Importation de la Façade Auth
 // Contrôleur dédié au tableau de bord et à la gestion du profil du producteur
 class ProducteurController extends Controller
 {
+    // Applique les middlewares de sécurité.
+    public function __construct()
+    {
+        $this->middleware(['auth', 'producteur']);
+    }
+
     // Affiche le tableau de bord principal de la zone Producteur.
     public function dashboard()
     {

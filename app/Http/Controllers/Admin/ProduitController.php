@@ -6,8 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Produit; // Modèle de la table 'produits'
 
 // Contrôleur de gestion et de modération des produits (zone Admin)
-class ProductController extends Controller
+class ProduitController extends Controller
 {
+
+     public function __construct()
+    {
+        $this->middleware(['auth', 'admin']);
+    }
     // Affiche la liste de tous les produits (inclut ceux en attente de modération). (READ)
     public function index()
     {

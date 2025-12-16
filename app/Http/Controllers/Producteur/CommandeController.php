@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth; // Importation de la Façade Auth
 // Contrôleur de gestion des commandes reçues par le producteur connecté
 class CommandeController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth', 'producteur']);
+    }
     // Affiche la liste des commandes destinées uniquement au producteur connecté. (READ)
     public function index()
     {

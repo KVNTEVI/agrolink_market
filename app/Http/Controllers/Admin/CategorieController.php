@@ -7,8 +7,13 @@ use App\Models\Categorie; // Modèle de la table 'categories'
 use Illuminate\Http\Request;
 
 // Contrôleur de gestion des catégories dans la zone d'administration
-class CategoryController extends Controller
+class CategorieController extends Controller
 {
+
+    public function __construct()
+        {
+            $this->middleware(['auth', 'admin']);
+        }
     // Affiche la liste de toutes les catégories. (READ)
     public function index()
     {
@@ -27,6 +32,9 @@ class CategoryController extends Controller
     // Enregistre une nouvelle catégorie dans la base de données. (CREATE - Store)
     public function store(Request $request)
     {
+
+        
+
         // Valide l'entrée : 'nom' est requis et doit être unique dans la table 'categories'.
         $request->validate([
             'nom' => 'required|unique:categories'

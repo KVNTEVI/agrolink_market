@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth; // Importation de la Façade Auth pour l'ut
 // Contrôleur dédié au tableau de bord et à la gestion du profil de l'acheteur
 class AcheteurController extends Controller
 {
+    // Applique les middlewares de sécurité.
+    public function __construct()
+{
+    $this->middleware(['auth', 'acheteur']);
+}
+
     // Affiche le tableau de bord principal de la zone Acheteur.
     public function dashboard()
     {
