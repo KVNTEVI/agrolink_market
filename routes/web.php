@@ -18,10 +18,13 @@ use App\Http\Controllers\Acheteur\ConversationController as AcheteurConversation
 use App\Http\Controllers\Producteur\ConversationController as ProducteurConversationController;
 use App\Http\Controllers\ConversationMessageController;
 use App\Http\Controllers\Acheteur\PaiementController as AcheteurPaiementController;
+use App\Http\Controllers\BoutiqueController;
+use App\Http\Controllers\MagazinController;
+use App\Http\Controllers\ContactController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Auth::routes();
@@ -178,3 +181,28 @@ Route::middleware(['auth', 'acheteur'])->group(function () {
         [AcheteurPaiementController::class, 'payer']
     )->name('paiement.payer');
 });
+
+Route::get('/boutique', [BoutiqueController::class, 'index'])
+    ->name('boutique.index');
+
+Route::get('/boutique/produit/{id}', [BoutiqueController::class, 'show'])
+    ->name('boutique.show');
+
+Route::get('/magazin', [MagazinController::class, 'index'])
+    ->name('magazin.index');
+
+Route::get('/magazin/producteur/{id}', [MagazinController::class, 'show'])
+    ->name('magazin.show');
+
+Route::get('/magazin/producteur/{id}/produits', [MagazinController::class, 'produits'])
+    ->name('magazin.produits');
+
+Route::get('/contact', [ContactController::class, 'index'])
+    ->name('contact.index');
+
+Route::post('/contact', [ContactController::class, 'store'])
+    ->name('contact.store');
+
+Route::get('/apropos', function () {
+    return view('apropos.index');
+})->name('apropos');

@@ -58,7 +58,7 @@ class PaiementController extends Controller
             ->where('acheteur_id', Auth::id())
             ->firstOrFail();
 
-        // 💡 OPTIMISATION : Vous pourriez ajouter une vérification pour s'assurer que
+        // OPTIMISATION : Vous pourriez ajouter une vérification pour s'assurer que
         // la commande n'est pas déjà 'payée' ou 'annulée' avant de procéder.
 
         // 2. Création de l'enregistrement de paiement (Simulation)
