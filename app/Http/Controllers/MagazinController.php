@@ -18,13 +18,10 @@ class MagazinController extends Controller
     public function index()
     {
         // 1. On filtre les utilisateurs par leur rôle
-        $producteurs = Utilisateur::whereHas('role', function ($q) {
-                // On ne récupère que ceux dont le rôle est 'producteur'
-                $q->where('nom', 'producteur');
-            })
+        $producteurs = Utilisateur::where('role_id', 3)->get();
             // 2. On vérifie que le compte du producteur est actif (statut true)
-            ->where('statut', true)
-            ->get();
+            // ->where('statut', true)
+            // ->get();
 
         // 3. Retourne la vue avec la liste des vendeurs
         return view('magazin.index', compact('producteurs'));
@@ -40,9 +37,9 @@ class MagazinController extends Controller
         // On récupère l'utilisateur en s'assurant qu'il possède bien le rôle producteur
         // Cela évite qu'un petit malin puisse voir le profil d'un admin via cette route.
         $producteur = Utilisateur::whereHas('role', function ($q) {
-                $q->where('nom', 'producteur');
+                $q->where('nom_role', 'producteur');
             })
-            ->where('id_utilisateur', $id) // Utilisation de votre clé primaire personnalisée
+            ->where('id_utilisateur', $id) // Filtre par ID
             ->firstOrFail(); // Renvoie une 404 si non trouvé ou si ce n'est pas un producteur
 
         return view('magazin.show', compact('producteur'));
@@ -61,7 +58,7 @@ class MagazinController extends Controller
         // 2. On récupère ses produits validés uniquement
         $produits = Produit::where('producteur_id', $id)
             ->where('statut', 'valide')
-            // Pagination pour ne pas surcharger la page si le producteur a beaucoup d'articles
+            // pagination pour éviter de surcharger la page si beaucoup de produits
             ->paginate(10);
 
         // 3. On passe les deux variables à la vue : 

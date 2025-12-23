@@ -25,6 +25,7 @@ class UtilisateurSeeder extends Seeder
             'telephone' => '97909802',
             'adresse' => 'Bureau Principal, ADN Golfe 1',
             'role_id' => 1, // ID du Rôle Administrateur
+            'image' => 'avatar12.png',
         ]);
 
         // Création d'un Producteur (ID Rôle 3)
@@ -35,6 +36,7 @@ class UtilisateurSeeder extends Seeder
             'telephone' => '90000000',
             'adresse' => 'Ferme Prod, Région plateux',
             'role_id' => 3, // ID du Rôle Producteur
+            'image' => 'avatar1.png',
         ]);
 
         // Création d'un Acheteur (ID Rôle 2)
@@ -45,6 +47,12 @@ class UtilisateurSeeder extends Seeder
             'telephone' => '91111111',
             'adresse' => 'Lomé',
             'role_id' => 2, // ID du Rôle Acheteur
+            'image' => 'avatar11.png',
+        ]);
+
+        // Génère 10 producteurs aléatoires
+        Utilisateur::factory(10)->create([
+            'role_id' => 3 // On force le rôle producteur pour ces 10 là
         ]);
         
     }

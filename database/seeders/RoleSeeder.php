@@ -18,13 +18,13 @@ class RoleSeeder extends Seeder
         // 2. Définition des rôles avec leurs ID pour un mappage facile
         $roles = [
             // ID 1 : Généralement réservé au super utilisateur
-            ['id_role' => 1, 'nom_role' => 'Administrateur'],
+            ['id_role' => 1, 'nom_role' => 'administrateur'],
             
-            // ID 2 : Rôle par défaut si l'utilisateur ne choisit rien (ou rôle standard acheteur)
-            ['id_role' => 2, 'nom_role' => 'Acheteur'],
+            // ID 2 : Rôle pour ceux qui vendent
+            ['id_role' => 2, 'nom_role' => 'acheteur'],
             
-            // ID 3 : Rôle pour ceux qui vendent
-            ['id_role' => 3, 'nom_role' => 'Producteur'],
+            // ID 3 : Rôle par défaut si l'utilisateur ne choisit rien (ou rôle standard acheteur)
+            ['id_role' => 3, 'nom_role' => 'producteur'],
         ];
 
         // 3. Insertion des données

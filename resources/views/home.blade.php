@@ -32,18 +32,21 @@
                     <div class="carousel-inner rounded shadow">
 
                         <div class="carousel-item active">
-                            <img src="https://images.unsplash.com/photo-1587049352846-4a222e7841b4"
-                                 class="d-block w-100" alt="Soja">
+                            <img src="{{ asset('images/slider/111.jpg') }}"
+                                 class="d-block w-100" alt="Soja"
+                                 style="height: 300px; object-fit: cover;">
                         </div>
 
                         <div class="carousel-item">
-                            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
-                                 class="d-block w-100" alt="Cacao">
+                            <img src="{{ asset('images/slider/2222.jpg') }}"
+                                 class="d-block w-100" alt="Cacao"
+                                 style="height: 300px; object-fit: cover;">
                         </div>
 
                         <div class="carousel-item">
-                            <img src="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38"
-                                 class="d-block w-100" alt="Café">
+                            <img src="{{ asset('images/slider/3333.jpg') }}"
+                                 class="d-block w-100" alt="Café"
+                                 style="height: 300px; object-fit: cover;">
                         </div>
 
                     </div>
@@ -59,12 +62,18 @@
     <div class="container text-center">
         <h3 class="fw-bold mb-4">Catégories populaires</h3>
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             @foreach (['Cacao','Anacarde','Soja','Café'] as $cat)
             <div class="col-6 col-md-3">
-                <div class="border rounded p-4 h-100 shadow-sm">
-                    <i class="bi bi-box-seam fs-1 text-success"></i>
-                    <h6 class="mt-3">{{ $cat }}</h6>
+                <div class="border rounded p-4 h-100 shadow-sm hover-card" style="cursor: pointer;">
+                    @php
+                        $nomFichier = Str::lower(Str::ascii($cat));
+                    @endphp
+                    <img src="{{ asset('images/icones/' . $nomFichier . '.png') }}" 
+                         alt="{{ $cat }}" 
+                         class="mb-3"
+                         style="width: 32px; height: 32px; object-fit: contain;">
+                    <h6 class="fw-bold text-dark">{{ $cat }}</h6>
                 </div>
             </div>
             @endforeach
@@ -78,21 +87,27 @@
         <h3 class="fw-bold text-center mb-4">Produits phares</h3>
 
         <div class="row g-4">
-            @for ($i = 0; $i < 6; $i++)
+            @forelse ($produitsPhares as $produit)
             <div class="col-6 col-md-4 col-lg-3">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1587049352846-4a222e7841b4"
-                         class="card-img-top" alt="Produit">
-                    <div class="card-body">
-                        <h6 class="card-title">Produit agricole</h6>
-                        <p class="text-success fw-bold">25 000 FCFA / sac</p>
-                        <a href="#" class="btn btn-sm btn-success w-100">
-                            Voir
+                <div class="card h-100 shadow-sm hover-card">
+                    <img src="{{ asset('images/produits/' . $produit->image)}}"
+                         class="card-img-top" alt="Produit"
+                         style="height:200px; object-fit:cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title fw-bold">{{ $produit->nom }}</h6>
+                        <p class="text-success fw-bold">
+                            {{ number_format($produit->prix_unitaire, 0, ',', ' ') }} FCFA
+                        </p>
+                        <a href="{{ route('boutique.show', $produit->id_produit) }}" 
+                           class="btn btn-sm btn-success mt-auto">
+                            Voir le produit
                         </a>
                     </div>
                 </div>
             </div>
-            @endfor
+            @empty
+            <p class="text-muted text-center">Aucun produit phare disponible pour le moment.</p>
+            @endforelse
         </div>
     </div>
 </section>
@@ -100,7 +115,10 @@
 <!-- ================= CTA PRODUCTEUR ================= -->
 <section class="py-5 bg-white">
     <div class="container text-center">
-        <i class="bi bi-truck fs-1 text-success"></i>
+        <img src="{{ asset('images/icones/tracteur.png') }}" 
+                         alt="{{ $cat }}" 
+                         class="mb-3"
+                         style="width: 64px; height: 64px; object-fit: contain;">
         <h4 class="fw-bold mt-3">
             Cultivez votre succès avec AgroLink Market
         </h4>

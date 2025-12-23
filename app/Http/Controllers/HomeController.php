@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Produit;
 
 class HomeController extends Controller
 {
@@ -11,11 +12,6 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Show the application dashboard.
      *
@@ -23,6 +19,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        // On récupère les 4 ou 8 derniers produits valides pour l'accueil
+        $produitsPhares = Produit::where('statut', 'valide')
+                                ->latest()
+                                ->take(4) // On en prend seulement 4 pour l'accueil
+                                ->get();
+
+        return view('home', compact('produitsPhares')); 
     }
 }

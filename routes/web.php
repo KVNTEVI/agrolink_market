@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UtilisateurController;
 use App\Http\Controllers\Admin\CategorieController;
@@ -23,9 +24,7 @@ use App\Http\Controllers\MagazinController;
 use App\Http\Controllers\ContactController;
 
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Auth::routes();
 
@@ -38,6 +37,24 @@ Route::middleware(['auth', 'admin'])->get('/admin/dashboard', function () {
 Route::middleware(['auth', 'producteur'])->get('/producteur/dashboard', function () {
     return view('producteur.dashboard');
 });
+
+Route::get('/producteur/notifications-data', function () {
+    // On récupère uniquement les notifications non lues de l'utilisateur connecté
+    return response()->json(Auth::user()->unreadNotifications);
+})->name('producteur.notifications')->middleware('auth');
+
+Route::post('/producteur/notifications/{id}/read', function ($id) {
+    // On récupère l'utilisateur et on dit explicitement à l'éditeur : "C'est un Utilisateur"
+    /** @var Utilisateur $user */
+    $user = Auth::user(); 
+
+    // Maintenant $user->notifications() ne sera plus en rouge
+    $user->unreadNotifications()
+         ->where('id', $id)
+         ->update(['read_at' => now()]);
+
+    return back();
+})->name('producteur.notifications.read');
 
 Route::middleware(['auth', 'acheteur'])->get('/acheteur/dashboard', function () {
     return view('acheteur.dashboard');
@@ -97,16 +114,24 @@ Route::middleware(['auth', 'acheteur'])
 
     Route::post('/profil', [AcheteurController::class, 'updateProfil'])
         ->name('profil.update');
-        Route::get('/panier', [PanierController::class, 'index'])
+
+    Route::get('/panier', [PanierController::class, 'index'])
         ->name('panier.index');
 
     Route::post('/panier/ajouter/{id}', [PanierController::class, 'add'])
         ->name('panier.add');
-        Route::get('/commandes', [CommandeController::class, 'index'])
+
+    Route::delete('/panier/item/{id}', [PanierController::class, 'remove'])
+            ->name('panier.remove');
+
+    Route::get('/commandes', [CommandeController::class, 'index'])
         ->name('commandes.index');
 
     Route::post('/commandes', [CommandeController::class, 'store'])
         ->name('commandes.store');
+
+    Route::get('/commandes/{id}', [CommandeController::class, 'show'])
+        ->name('commandes.show');
 });
 
 Route::middleware(['auth', 'producteur'])
@@ -134,6 +159,11 @@ Route::middleware(['auth', 'producteur'])
 
     Route::patch('/commandes/{id}/{status}', [CommandeProducteurController::class, 'updateStatus'])
         ->name('commandes.status');
+    
+    Route::post('/conversation/{id}/message', 
+    [AcheteurConversationController::class, 'store'])
+        ->name('message.store');
+
 });
 
 Route::middleware(['auth'])->group(function () {

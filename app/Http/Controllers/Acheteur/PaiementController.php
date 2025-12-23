@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Commande;
 use App\Models\Paiement;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\CommandePayeeNotification;
+use App\Models\Utilisateur;
+
 
 /**
  * Ce contrôleur gère l'affichage de la page de paiement et la logique
@@ -75,6 +78,14 @@ class PaiementController extends Controller
         $commande->update([
             'statut' => 'payée'
         ]);
+
+        // 🔔 NOTIFICATION DU PRODUCTEUR
+        $producteur = Utilisateur::find($commande->producteur_id);
+
+        $producteur->notify(
+            new CommandePayeeNotification($commande)
+        );
+
 
         // 4. Redirection et message de succès
         // Redirige l'utilisateur vers la liste de ses commandes.

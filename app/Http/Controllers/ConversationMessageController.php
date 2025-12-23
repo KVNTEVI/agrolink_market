@@ -29,6 +29,11 @@ class ConversationMessageController extends Controller
             abort(403, 'Accès non autorisé à cette conversation.');
         }
 
+        // BLOQUER SI LA CONVERSATION N'EST PLUS OUVERTE
+        if ($conversation->statut !== 'ouverte') {
+            return back()->with('error', 'Cette négociation est déjà terminée (Accord trouvé ou Refus).');
+        }
+
         // 2. VALIDATION DES DONNÉES
         // S'assure qu'au moins 'contenu' ou 'prix_propose' est présent.
         $request->validate([

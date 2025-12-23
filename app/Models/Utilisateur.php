@@ -5,6 +5,7 @@ namespace App\Models;
 // NOUVELLES IMPORTATIONS pour l'authentification et les notifications
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Modèle Eloquent pour la table 'utilisateurs'.
@@ -13,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 class Utilisateur extends Authenticatable //  Hérite de la classe d'authentification
 {
     use Notifiable; // Permet d'envoyer des notifications (ex: réinitialisation de mot de passe)
-
+    use HasFactory; // Permet l'utilisation des usines de modèles (factories)
     // Indique à Eloquent d'utiliser la table 'utilisateurs'
     protected $table = 'utilisateurs';
     
@@ -22,7 +23,7 @@ class Utilisateur extends Authenticatable //  Hérite de la classe d'authentific
 
     // 1. Configuration des champs de la table
     protected $fillable = [
-        'nom', 'email', 'password', 'telephone', 'adresse', 'role_id'
+        'nom', 'email', 'password', 'telephone', 'adresse', 'role_id','image'
     ];
 
     // Champs qui ne DOIVENT PAS être affichés lorsque le modèle est converti en tableau ou JSON (sécurité)
@@ -32,6 +33,24 @@ class Utilisateur extends Authenticatable //  Hérite de la classe d'authentific
     ];
 
     // 2. Relations de l'utilisateur (conservées de votre ancien code)
+
+    // --- HELPERS DE RÔLES ---
+
+    /**
+     * Vérifie si l'utilisateur est un acheteur (ID 2 dans votre seeder)
+     */
+    public function isAcheteur()
+    {
+        return $this->role_id == 2;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un producteur (ID 3 dans votre seeder)
+     */
+    public function isProducteur()
+    {
+        return $this->role_id == 3;
+    }
 
     /**
      * Relation : L'utilisateur appartient à UN Rôle.

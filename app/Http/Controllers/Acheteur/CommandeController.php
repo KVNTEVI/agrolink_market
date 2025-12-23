@@ -40,6 +40,18 @@ class CommandeController extends Controller
         return view('acheteur.commandes.index', compact('commandes'));
     }
 
+
+    public function show($id)
+    {
+        $commande = Commande::where('id_commande', $id)
+            ->where('acheteur_id', Auth::id())
+            ->with('items.produit')
+            ->firstOrFail();
+
+        return view('acheteur.commandes.show', compact('commande'));
+    }
+
+
     /**
      * Crée une ou plusieurs commandes à partir du contenu du panier de l'acheteur.
      * * NOTE IMPORTANTE : Ce contrôleur crée UNE NOUVELLE COMMANDE PAR LIGNE D'ARTICLE DE PANIER.
@@ -64,8 +76,7 @@ class CommandeController extends Controller
             // 🔑 DÉTERMINATION DU PRIX FINAL
             // Si le prix négocié est renseigné ($item->prix_negocie), on l'utilise.
             // Sinon, on prend le prix de base du produit ($item->produit->prix).
-            $prixFinal = $item->prix_negocie
-                ?? $item->produit->prix;
+            $prixFinal = $item->prix_negocie ?? $item->produit->prix_unitaire;
 
             // 1️⃣ Création de la COMMANDE principale
             $commande = Commande::create([
@@ -93,6 +104,6 @@ class CommandeController extends Controller
         // On supprime tous les items, pas le panier lui-même.
         $panier->items()->delete();
 
-        return back()->with('success', 'Commande créée avec succès');
+        return redirect()->route('acheteur.commandes.index')->with('success', 'Votre commande a été passée avec succès !');
     }
 }

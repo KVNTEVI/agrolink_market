@@ -19,7 +19,6 @@ class AcheteurMiddleware
     {
         // 1. Vérifie si l'utilisateur n'est PAS connecté (Auth::check())
         // OU si l'utilisateur connecté n'a PAS le role_id 3 (Acheteur).
-        // (Nous supposons que l'ID 3 correspond au rôle 'Acheteur'.)
         if (!Auth::check() || Auth::user()->role_id != 2) { 
             
             // Si la condition est VRAIE (utilisateur non autorisé), l'accès est bloqué.

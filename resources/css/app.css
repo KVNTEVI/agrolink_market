@@ -9,13 +9,3 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
-
-/* Style pour les liens du footer */
-.footer-link {
-    transition: color 0.3s ease; /* Animation douce pour le changement de couleur */
-}
-
-.footer-link:hover {
-    color: #198754 !important; /* Le vert 'success' de Bootstrap */
-    text-decoration: underline !important; /* Optionnel : souligne au survol */
-}

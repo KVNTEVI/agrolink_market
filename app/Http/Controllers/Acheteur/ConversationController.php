@@ -33,7 +33,7 @@ class ConversationController extends Controller
         );
 
         // Redirige vers la vue de la conversation (utilise l'ID de la clé primaire)
-        return redirect()->route('conversation.show', $conversation->id); 
+        return redirect()->route('conversation.show', $conversation->id_conversation); 
     }
 
     /**
