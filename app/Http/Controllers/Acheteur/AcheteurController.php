@@ -4,53 +4,81 @@ namespace App\Http\Controllers\Acheteur;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Importation de la Façade Auth pour l'utilisateur
+use Illuminate\Support\Facades\Auth;
 
 // Contrôleur dédié au tableau de bord et à la gestion du profil de l'acheteur
 class AcheteurController extends Controller
 {
     // Applique les middlewares de sécurité.
     public function __construct()
-{
-    $this->middleware(['auth', 'acheteur']);
-}
+    {
+        $this->middleware(['auth', 'acheteur']);
+    }
 
     // Affiche le tableau de bord principal de la zone Acheteur.
     public function dashboard()
     {
-        // Affiche la vue : resources/views/acheteur/dashboard.blade.php
-        return view('acheteur.dashboard');
+        /** @var \App\Models\Utilisateur $user */
+        $user = Auth::user();
+
+        // 1. Nombre de notifications non lues
+        $unreadNotificationsCount = $user->unreadNotifications->count();
+
+        // 2. Nombre de messages (conversations actives)
+        $messagesCount = \App\Models\Conversation::where('acheteur_id', $user->id_utilisateur)->count();
+
+        // 3. Historique des paiements de l'acheteur
+        // On récupère les paiements via les commandes passées par cet acheteur
+        $paiements = \App\Models\Paiement::whereHas('commande', function($query) use ($user) {
+            // Note : Assurez-vous que la colonne est bien 'id_utilisateur' ou 'acheteur_id' dans votre table commandes
+            $query->where('id_utilisateur', $user->id_utilisateur);
+        })->with('commande')->latest()->get();
+
+        // 4. Notifications récentes (3 dernières) pour l'affichage rapide
+        $recentNotifications = $user->notifications()->take(3)->get();
+
+        return view('acheteur.dashboard', compact(
+            'unreadNotificationsCount', 
+            'messagesCount', 
+            'paiements', 
+            'recentNotifications'
+        ));
     }
 
-    // Affiche le formulaire d'édition/consultation du profil de l'utilisateur connecté. (READ)
+    /**
+     * Affiche la liste complète des notifications de l'acheteur avec pagination
+     */
+    public function notifications()
+    {
+        /** @var \App\Models\Utilisateur $user */
+        $user = Auth::user();
+
+        // On récupère toutes les notifications avec une pagination (10 par page)
+        $allNotifications = $user->notifications()->paginate(10);
+
+        return view('acheteur.notifications', compact('allNotifications'));
+    }
+
+    // Affiche le formulaire d'édition/consultation du profil de l'utilisateur connecté.
     public function profil()
     {
-        // Récupère l'objet Utilisateur actuellement authentifié.
         $user = Auth::user(); 
-        
-        // Affiche la vue 'acheteur.profil' avec les données de l'utilisateur.
-        return view('acheteur.profil', compact('user'));
+        return view('acheteur.profil.index', compact('user'));
     }
 
-    // Gère la mise à jour des informations du profil (nom, email). (UPDATE)
+    // Gère la mise à jour des informations du profil (nom, email).
     public function updateProfil(Request $request)
     {
-        // Récupère l'objet Utilisateur connecté.
-        // NOTE: Il est préférable d'utiliser le type hint PHPDoc pour éviter les avertissements de l'éditeur:
-        // /** @var \App\Models\Utilisateur $user */
+        /** @var \App\Models\Utilisateur $user */
         $user = Auth::user(); 
 
-        // Validation des données : nom requis, email requis et format valide.
         $request->validate([
             'nom' => 'required',
             'email' => 'required|email'
         ]);
 
-        /** @var \App\Models\Utilisateur $user */
-        // Met à jour les champs 'nom' et 'email' de l'utilisateur (via Mass Assignment).
         $user->update($request->only(['nom', 'email']));
 
-        // Redirige l'utilisateur vers la page précédente (back()) avec un message de succès.
         return back()->with('success', 'Profil mis à jour.');
     }
 }

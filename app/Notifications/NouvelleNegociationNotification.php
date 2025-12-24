@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Models\Conversation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\DatabaseMessage; 
 
 /**
  * SECTION 1 : CONFIGURATION DE LA NOTIFICATION
@@ -33,6 +32,7 @@ class NouvelleNegociationNotification extends Notification
      */
     public function via($notifiable)
     {
+        // On utilise uniquement le canal 'database' pour stocker en BDD
         return ['database'];
     }
 
@@ -49,14 +49,14 @@ class NouvelleNegociationNotification extends Notification
             // SECTION 4.1 : LOGIQUE DU MESSAGE (Match)
             // Détermine dynamiquement le texte affiché selon l'action effectuée
             'message' => match($this->type) {
-                'offre'   => 'Nouvelle offre de prix reçue',
+                'offre'   => 'Nouvelle proposition de prix reçue',
                 'accepte' => 'Votre offre a été acceptée',
                 'refuse'  => 'Votre offre a été refusée',
                 default   => 'Nouveau message'
             },
 
-            // SECTION 4.2 : INFORMATIONS COMPLÉMENTAIRES
-            'produit'    => $this->conversation->produit->nom,
+            // SECTION 4.2 : INFORMATIONS COMPLÉMENTAIRES (Pour enrichir l'affichage)
+            'produit'    => $this->conversation->produit->nom ?? 'Produit inconnu',
             'type'       => $this->type,
             'prix_final' => $this->conversation->prix_final,
         ];

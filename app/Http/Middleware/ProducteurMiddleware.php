@@ -18,7 +18,7 @@ class ProducteurMiddleware
     public function handle(Request $request, Closure $next)
     {
         // 1. Vérifie si l'utilisateur n'est PAS connecté (Auth::check())
-        // OU si l'utilisateur connecté n'a PAS le role_id 2 (Producteur).
+        
         if (!Auth::check() || Auth::user()->role_id != 3) { 
             
             // Si la condition est VRAIE (utilisateur non autorisé), l'accès est bloqué.

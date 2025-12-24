@@ -15,6 +15,7 @@ class ProduitController extends Controller
     {
         $this->middleware(['auth', 'producteur']);
     }
+
     // Affiche la liste des produits créés UNIQUEMENT par l'utilisateur connecté. (READ)
     public function index()
     {
@@ -25,38 +26,38 @@ class ProduitController extends Controller
         $produits = Produit::where('producteur_id', $producteurId)->get();
         
         // Affiche la vue 'producteur.produits.index'.
-        return view('producteur.produits.index', compact('produits'));
+        return view('producteur.produit.index', compact('produits'));
     }
 
     // Affiche le formulaire pour ajouter un nouveau produit. (CREATE - Form)
     public function create()
     {
-        return view('producteur.produits.create');
+        return view('producteur.produit.create');
     }
 
     // Enregistre un nouveau produit dans la base de données. (CREATE - Store)
     public function store(Request $request)
     {
-        // Utilisation de la Façade pour récupérer l'ID
-        $producteurId = Auth::id(); 
-        
         // Validation des champs requis.
         $request->validate([
-            'nom' => 'required',
-            'prix' => 'required|numeric',
-            'image' => 'required', 
+            'nom' => 'required|string|max:255',
+            'prix_unitaire' => 'required|numeric',
+            'stock' => 'required|integer',
+            'image' => 'nullable|string', // Ou file si tu gères l'upload
+            'description' => 'nullable|string',
         ]);
 
         // Crée et enregistre le produit.
         Produit::create([
             'nom' => $request->nom,
-            'prix' => $request->prix,
+            'description' => $request->description,
+            'prix_unitaire' => $request->prix_unitaire,
+            'stock' => $request->stock,
             'image' => $request->image,
-            // Utilisation de la variable explicite
-            'producteur_id' => $producteurId 
+            'producteur_id' => Auth::id()
         ]);
 
-        // Redirige avec un message de succès.
-        return redirect()->back()->with('success', 'Produit ajouté');
+        // Redirige vers l'index avec un message de succès.
+        return redirect()->route('producteur.produit.index')->with('success', 'Produit ajouté avec succès !');
     }
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Utilisateur; // Import du modèle Utilisateur
 use App\Models\Produit;     // Import du modèle Produit
 use App\Models\Categorie;   // Import du modèle Catégorie
-use App\Models\Avis;        // Import du modèle Avis
 use App\Models\Paiement;    // Import du modèle Paiement
 
 // Contrôleur principal pour la zone d'administration
@@ -28,7 +27,7 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        // Retourne la vue du tableau de bord avec les statistiques (cartes KPI)
+        // Retourne la vue du tableau de bord avec les statistiques (cartes KPI) et données récentes
         return view('admin.dashboard', [
             // Compte le nombre total d'utilisateurs
             'totalUtilisateurs' => Utilisateur::count(), 
@@ -36,10 +35,10 @@ class AdminController extends Controller
             'totalProduits' => Produit::count(),     
             // Compte le nombre total de catégories
             'totalCategories' => Categorie::count(),   
-            // Compte le nombre total d'avis
-            'totalAvis' => Avis::count(),            
             // Compte le nombre total de paiements enregistrés
             'totalPaiements' => Paiement::count(),    
+            // On récupère les 5 derniers utilisateurs pour l'affichage avec leur rôle
+            'utilisateursRecents' => Utilisateur::with('role')->latest()->limit(5)->get(),
         ]);
     }
 }

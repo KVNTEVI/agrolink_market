@@ -4,52 +4,59 @@ namespace App\Http\Controllers\Producteur;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Utilisateur; // Modèle Utilisateur
-use Illuminate\Support\Facades\Auth; // Importation de la Façade Auth
+use App\Models\Commande; 
+use App\Models\Produit;  
+use Illuminate\Support\Facades\Auth;
 
-// Contrôleur dédié au tableau de bord et à la gestion du profil du producteur
 class ProducteurController extends Controller
 {
-    // Applique les middlewares de sécurité.
     public function __construct()
     {
         $this->middleware(['auth', 'producteur']);
     }
 
-    // Affiche le tableau de bord principal de la zone Producteur.
     public function dashboard()
     {
-        // Affiche la vue : resources/views/producteur/dashboard.blade.php
-        return view('producteur.dashboard');
-    }
+        $userId = Auth::id(); 
 
-    // Affiche le formulaire d'édition/consultation du profil de l'utilisateur connecté. (READ)
-    public function profil()
-    {
-        // Récupère l'objet Utilisateur actuellement authentifié.
-        $user = Auth::user(); 
+        // 1. Statistiques du haut (KPIs)
+        // Note: On utilise 'montant_total' selon ton modèle Commande
+        $chiffreAffaires = Commande::where('producteur_id', $userId)
+            ->where('statut', 'payé')
+            ->sum('montant_total');
+
+        $commandesEnAttente = Commande::where('producteur_id', $userId)
+            ->where('statut', 'en_attente')
+            ->count();
+
+        $totalProduits = Produit::where('producteur_id', $userId)->count();
+        $satisfaction = 92; 
+
+        // 2. Données pour les tableaux
+        // On récupère les 4 dernières commandes avec l'acheteur
+        $commandesRecentes = Commande::where('producteur_id', $userId)
+            ->with('acheteur')
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // Alertes Stock : On utilise 'stock' selon ton modèle Produit
+        $alertesStock = Produit::where('producteur_id', $userId)
+            ->where('stock', '<', 5)
+            ->get();
         
-        // Affiche la vue 'producteur.profil' avec les données de l'utilisateur.
-        return view('producteur.profil', compact('user'));
+        return view('producteur.dashboard', compact(
+            'chiffreAffaires', 
+            'commandesEnAttente', 
+            'totalProduits', 
+            'satisfaction',
+            'commandesRecentes',
+            'alertesStock'
+        ));
     }
 
-    // Gère la mise à jour des informations du profil (nom, email). (UPDATE)
-    public function updateProfil(Request $request)
-    {
-        /** @var \App\Models\Utilisateur $user */
-        // Récupère l'objet Utilisateur connecté.
-        $user = Auth::user(); 
-
-        // Validation des données : nom requis, email requis et format valide.
-        $request->validate([
-            'nom' => 'required',
-            'email' => 'required|email'
-        ]);
-
-        // Met à jour les champs 'nom' et 'email' de l'utilisateur.
-        $user->update($request->only(['nom', 'email']));
-
-        // Redirige l'utilisateur avec un message de succès.
-        return redirect()->back()->with('success', 'Profil mis à jour.');
+    public function profil() 
+    { 
+        return view('producteur.profil', ['user' => Auth::user()]); 
     }
 }

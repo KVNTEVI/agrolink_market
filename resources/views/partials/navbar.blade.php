@@ -114,9 +114,9 @@
                                 @php
                                     // On fait correspondre le nom en BDD avec le nom de la route
                                     $routeName = match(Auth::user()->role->nom_role) {
-                                        'Administrateur' => 'admin.dashboard',
-                                        'Producteur'     => 'producteur.dashboard',
-                                        'Acheteur'       => 'acheteur.dashboard',
+                                        'administrateur' => 'admin.dashboard',
+                                        'producteur'     => 'producteur.dashboard',
+                                        'acheteur'       => 'acheteur.dashboard',
                                         default          => 'home'
                                     };
                                 @endphp
