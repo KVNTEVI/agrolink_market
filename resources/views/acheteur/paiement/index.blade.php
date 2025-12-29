@@ -1,87 +1,74 @@
-@extends('layouts.app')
-
-@section('title', 'Historique des paiements')
+@extends('layouts.acheteur')
+@section('title', 'Mon Historique de Paiements')
 
 @section('content')
-<div class="container py-4">
-
-    {{-- 🔙 Retour --}}
-    <a href="{{ route('acheteur.commandes.index') }}"
-       class="text-decoration-none text-muted mb-3 d-inline-block">
-        <i class="bi bi-arrow-left"></i> Mes commandes
-    </a>
-
-    {{-- 💳 Titre --}}
-    <div class="d-flex align-items-center mb-4">
-        <i class="bi bi-cash-stack fs-3 text-success me-2"></i>
-        <h4 class="mb-0 fw-bold">Historique des paiements</h4>
+<div class="container-fluid py-4">
+    {{-- EN-TÊTE --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Historique des Paiements</h4>
+            <p class="text-muted small mb-0">Consultez vos transactions et téléchargez vos reçus</p>
+        </div>
+        <div class="bg-white border rounded-4 px-3 py-2 shadow-sm">
+            <span class="text-muted small">Total dépensé : </span>
+            <span class="fw-bold text-success">{{ number_format($paiements->sum('montant'), 0, ',', ' ') }} FCFA</span>
+        </div>
     </div>
 
-    {{-- ✅ Message --}}
-    @if(session('success'))
-        <div class="alert alert-success">
-            <i class="bi bi-check-circle"></i> {{ session('success') }}
+    {{-- TABLEAU DES PAIEMENTS --}}
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="text-secondary small text-uppercase">
+                            <th class="ps-4">Date</th>
+                            <th>Référence Commande</th>
+                            <th>Mode de Paiement</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($paiements as $paiement)
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold">{{ $paiement->created_at->format('d M Y') }}</span>
+                                    <small class="text-muted">{{ $paiement->created_at->format('H:i') }}</small>
+                                </div>
+                            </td>
+                            <td class="fw-semibold text-primary">#{{ $paiement->commande->id_commande }}</td>
+                            <td>
+                                <span class="text-muted small">
+                                    <i class="bi bi-wallet2 me-1"></i> {{ ucfirst($paiement->mode) }}
+                                </span>
+                            </td>
+                            <td><span class="fw-bold text-dark">{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</span></td>
+                            <td>
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3">
+                                    {{ ucfirst($paiement->statut) }}
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a href="#" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                    <i class="bi bi-printer me-1"></i> Reçu
+                                </a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-credit-card-2-back fs-1 d-block mb-2"></i>
+                                Aucun paiement enregistré pour le moment.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-    @endif
-
-    {{-- ❌ Aucun paiement --}}
-    @if($paiements->isEmpty())
-        <div class="text-center py-5">
-            <i class="bi bi-receipt fs-1 text-muted"></i>
-            <p class="mt-3 text-muted">Aucun paiement effectué pour le moment.</p>
-        </div>
-    @else
-
-    {{-- 📋 Tableau --}}
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Commande</th>
-                    <th>Montant</th>
-                    <th>Mode</th>
-                    <th>Statut</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            @foreach($paiements as $paiement)
-                <tr>
-                    {{-- Commande --}}
-                    <td class="fw-semibold">
-                        #{{ $paiement->commande->id_commande }}
-                    </td>
-
-                    {{-- Montant --}}
-                    <td class="fw-bold text-success">
-                        {{ number_format($paiement->montant, 0, ',', ' ') }} FCFA
-                    </td>
-
-                    {{-- Mode --}}
-                    <td>
-                        <i class="bi bi-phone"></i>
-                        {{ ucfirst($paiement->mode) }}
-                    </td>
-
-                    {{-- Statut --}}
-                    <td>
-                        <span class="badge bg-success">
-                            <i class="bi bi-check-circle"></i> Payé
-                        </span>
-                    </td>
-
-                    {{-- Date --}}
-                    <td class="text-muted">
-                        {{ $paiement->created_at->format('d/m/Y') }}
-                    </td>
-                </tr>
-            @endforeach
-
-            </tbody>
-        </table>
     </div>
-
-    @endif
 </div>
 @endsection

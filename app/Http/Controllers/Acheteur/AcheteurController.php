@@ -31,7 +31,7 @@ class AcheteurController extends Controller
         // On récupère les paiements via les commandes passées par cet acheteur
         $paiements = \App\Models\Paiement::whereHas('commande', function($query) use ($user) {
             // Note : Assurez-vous que la colonne est bien 'id_utilisateur' ou 'acheteur_id' dans votre table commandes
-            $query->where('id_utilisateur', $user->id_utilisateur);
+            $query->where('acheteur_id', $user->id_utilisateur);
         })->with('commande')->latest()->get();
 
         // 4. Notifications récentes (3 dernières) pour l'affichage rapide

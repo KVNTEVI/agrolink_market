@@ -49,7 +49,7 @@
                                 </button>
                             </form>
 
-                            <a href="{{ route('conversation.start', $produit->id_produit) }}"
+                            <a href="{{ route('acheteur.conversation.start', $produit->id_produit) }}"
                             class="btn btn-outline-secondary">
                                 Négocier le prix
                             </a>

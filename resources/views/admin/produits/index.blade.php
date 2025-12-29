@@ -1,22 +1,26 @@
 @extends('layouts.admin')
-@section('title', 'Gestion des Produits')
+@section('title', 'Modération des Produits')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0">Modération des produits</h4>
+        <div>
+            <h4 class="fw-bold mb-0">Modération des Produits</h4>
+            <p class="text-muted small mb-0">Validez ou refusez les articles mis en ligne sur AgroLink</p>
+        </div>
         <div class="badge bg-dark p-2 px-3">Total : {{ $produits->count() }}</div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">Image & Nom</th>
-                            <th>Prix</th>
+                        <tr class="text-secondary" style="font-size: 0.9rem;">
+                            <th class="ps-4">Image & Désignation</th>
+                            <th>Prix Unitaire</th>
                             <th>Statut Actuel</th>
+                            <th>Date d'ajout</th>
                             <th class="text-end pe-4">Actions de Modération</th>
                         </tr>
                     </thead>
@@ -25,20 +29,30 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset($p->image ? 'images/produits/'.$p->image : 'images/default.png') }}" 
-                                         class="rounded-3 me-3" width="45" height="45" style="object-fit: cover;">
-                                    <span class="fw-bold">{{ $p->nom }}</span>
+                                    <div class="me-3">
+                                        <img src="{{ asset($p->image ? 'images/produits/'.$p->image : 'images/default.png') }}" 
+                                             class="rounded-3 border" width="45" height="45" style="object-fit: cover;">
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bold text-dark">{{ $p->nom }}</span>
+                                        <small class="text-muted">Réf: #PROD-{{ $p->id_produit }}</small>
+                                    </div>
                                 </div>
                             </td>
-                            <td>{{ number_format($p->prix_unitaire, 0, ',', ' ') }} FCFA</td>
+                            <td>
+                                <span class="fw-bold">{{ number_format($p->prix_unitaire, 0, ',', ' ') }} FCFA</span>
+                            </td>
                             <td>
                                 @if($p->statut == 'valide')
-                                    <span class="badge bg-success rounded-pill">Validé</span>
+                                    <span class="badge bg-success rounded-pill px-3">Validé</span>
                                 @elseif($p->statut == 'refuse')
-                                    <span class="badge bg-danger rounded-pill">Refusé</span>
+                                    <span class="badge bg-danger rounded-pill px-3">Refusé</span>
                                 @else
-                                    <span class="badge bg-warning text-dark rounded-pill">En attente</span>
+                                    <span class="badge bg-warning text-dark rounded-pill px-3">En attente</span>
                                 @endif
+                            </td>
+                            <td class="text-muted small">
+                                {{ $p->created_at->format('d/m/Y') }}
                             </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
@@ -59,7 +73,7 @@
                                     </form>
 
                                     {{-- Bouton Supprimer --}}
-                                    <form action="{{ route('admin.produits.destroy', $p->id_produit) }}" method="POST" onsubmit="return confirm('Supprimer définitivement ?')">
+                                    <form action="{{ route('admin.produits.destroy', $p->id_produit) }}" method="POST" onsubmit="return confirm('Supprimer définitivement ce produit ?')">
                                         @csrf @method('DELETE')
                                         <button class="btn btn-sm btn-light text-danger border-0 shadow-sm">
                                             <i class="bi bi-trash"></i>

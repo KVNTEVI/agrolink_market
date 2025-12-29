@@ -27,6 +27,22 @@ class PaiementController extends Controller
     }
 
     /**
+     * Affiche l'historique des paiements de l'acheteur.
+     */
+    public function index()
+    {
+        // On récupère les paiements liés aux commandes de l'utilisateur connecté
+        $paiements = Paiement::whereHas('commande', function ($query) {
+            $query->where('acheteur_id', Auth::id());
+        })
+        ->with('commande') // Charger la commande pour éviter les requêtes N+1
+        ->latest()         // Trier du plus récent au plus ancien
+        ->get();
+
+        return view('acheteur.paiement.index', compact('paiements'));
+    }
+
+    /**
      * Affiche la page de confirmation de paiement pour une commande spécifique.
      * Cette page présente généralement les détails de la commande et les options de paiement.
      *

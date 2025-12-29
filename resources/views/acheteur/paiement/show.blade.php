@@ -1,77 +1,72 @@
-@extends('layouts.app')
-
-@section('title', 'Paiement de la commande')
+@extends('layouts.acheteur')
+@section('title', 'Confirmer le Paiement')
 
 @section('content')
 <div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            {{-- CARTE DE PAIEMENT --}}
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-shield-check text-success fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold">Finaliser votre achat</h4>
+                        <p class="text-muted">Commande #{{ $commande->id_commande }}</p>
+                    </div>
 
-    {{-- Retour --}}
-    <a href="{{ route('acheteur.commandes.index') }}" class="text-decoration-none text-muted mb-3 d-inline-block">
-        <i class="bi bi-arrow-left"></i> Mes commandes
-    </a>
+                    <div class="bg-light rounded-4 p-3 mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Montant de la commande</span>
+                            <span class="fw-bold">{{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Frais de service</span>
+                            <span class="text-success fw-bold">Gratuit</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold">Total à payer</span>
+                            <span class="fw-bold fs-5 text-success">{{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA</span>
+                        </div>
+                    </div>
 
-    {{-- Titre --}}
-    <div class="d-flex align-items-center mb-4">
-        <i class="bi bi-credit-card fs-3 text-success me-2"></i>
-        <h4 class="mb-0 fw-bold">Paiement de la commande</h4>
-    </div>
+                    <form action="{{ route('acheteur.paiement.payer', $commande->id_commande) }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase text-muted">Choisir un mode de paiement</label>
+                            <div class="list-group">
+                                <label class="list-group-item d-flex gap-3 py-3 rounded-4 border-2 mb-2">
+                                    <input class="form-check-input flex-shrink-0" type="radio" name="mode" value="mobile_money" checked>
+                                    <span>
+                                        <strong class="d-block text-dark">Mobile Money (T-Money / Flooz)</strong>
+                                        <small class="text-muted">Paiement instantané via votre téléphone.</small>
+                                    </span>
+                                </label>
+                                <label class="list-group-item d-flex gap-3 py-3 rounded-4 border-2">
+                                    <input class="form-check-input flex-shrink-0" type="radio" name="mode" value="cash">
+                                    <span>
+                                        <strong class="d-block text-dark">Espèces (Cash)</strong>
+                                        <small class="text-muted">Paiement direct à la livraison.</small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
 
-    {{-- Carte paiement --}}
-    <div class="card shadow-sm">
-        <div class="card-body">
+                        <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm">
+                            Confirmer le paiement de {{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA
+                        </button>
+                    </form>
 
-            {{-- Infos commande --}}
-            <div class="mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="bi bi-receipt"></i> Détails de la commande
-                </h6>
-
-                <div class="row mb-2">
-                    <div class="col-md-4 text-muted">Commande N°</div>
-                    <div class="col-md-8 fw-semibold">#{{ $commande->id_commande }}</div>
-                </div>
-
-                <div class="row mb-2">
-                    <div class="col-md-4 text-muted">Montant total</div>
-                    <div class="col-md-8 fw-bold text-success">
-                        {{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA
+                    <div class="text-center mt-4">
+                        <a href="{{ route('acheteur.commandes.index') }}" class="text-muted small text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i> Retourner à mes commandes
+                        </a>
                     </div>
                 </div>
-
-                <div class="row mb-2">
-                    <div class="col-md-4 text-muted">Statut</div>
-                    <div class="col-md-8">
-                        <span class="badge bg-warning text-dark">
-                            <i class="bi bi-hourglass-split"></i> En attente de paiement
-                        </span>
-                    </div>
-                </div>
             </div>
-
-            {{-- Mode de paiement --}}
-            <div class="mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="bi bi-wallet2"></i> Mode de paiement
-                </h6>
-
-                <div class="alert alert-light border">
-                    <i class="bi bi-phone"></i>
-                    Paiement simulé par <strong>Mobile Money / Cash</strong>
-                </div>
-            </div>
-
-            {{-- Action paiement --}}
-            <div class="d-flex justify-content-end gap-2">
-                <form method="POST" action="{{ route('paiement.payer', $commande->id_commande) }}">
-                    @csrf
-                    <button type="submit" class="btn btn-success px-4">
-                        <i class="bi bi-check-circle"></i> Confirmer le paiement
-                    </button>
-                </form>
-            </div>
-
         </div>
     </div>
-
 </div>
 @endsection

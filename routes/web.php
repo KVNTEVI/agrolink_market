@@ -67,6 +67,9 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
     Route::post('/panier/ajouter/{id}', [PanierController::class, 'add'])->name('panier.add');
     Route::delete('/panier/item/{id}', [PanierController::class, 'remove'])->name('panier.remove');
 
+    Route::get('/paiements', [AcheteurPaiementController::class, 'index'])->name('paiements.index');
+    Route::get('/messages', [AcheteurConversationController::class, 'index'])->name('conversation.index');
+
     Route::get('/commandes', [CommandeController::class, 'index'])->name('commandes.index');
     Route::post('/commandes', [CommandeController::class, 'store'])->name('commandes.store');
     Route::get('/commandes/{id}', [CommandeController::class, 'show'])->name('commandes.show');

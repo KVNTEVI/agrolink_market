@@ -88,7 +88,7 @@
                     {{-- Action --}}
                     <td class="text-end">
                         @if($commande->statut !== 'payée')
-                            <a href="{{ route('paiement.show', $commande->id_commande) }}"
+                            <a href="{{ route('acheteur.paiement.show', $commande->id_commande) }}"
                                class="btn btn-sm btn-outline-success">
                                 <i class="bi bi-credit-card"></i> Payer
                             </a>

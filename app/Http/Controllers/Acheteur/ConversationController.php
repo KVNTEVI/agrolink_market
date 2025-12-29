@@ -10,6 +10,27 @@ use Illuminate\Routing\Redirector;
 // Contrôleur de gestion du démarrage et de l'affichage des conversations
 class ConversationController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth', 'acheteur']);
+    }
+
+    /**
+     * Liste toutes les conversations de l'acheteur
+     */
+    public function index()
+    {
+        // On récupère les conversations où l'utilisateur est l'acheteur
+        // On charge les relations 'producteur' et 'produit' pour l'affichage
+        $conversations = Conversation::where('acheteur_id', Auth::id())
+            ->with(['producteur', 'produit'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('acheteur.conversation.index', compact('conversations'));
+    }
+
     /**
      * Démarrer ou retrouver une conversation existante pour un produit donné.
      *
