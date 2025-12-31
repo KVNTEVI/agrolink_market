@@ -26,8 +26,7 @@ class ProducteurMiddleware
             abort(403, "Accès réservé aux producteurs.");
         }
 
-        // 2. Si l'utilisateur est connecté ET a le role_id = 2, la requête est autorisée
-        // et transmise à la destination finale (la route/le contrôleur).
+        
         return $next($request);
     }
 }

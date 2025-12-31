@@ -68,13 +68,20 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
     Route::delete('/panier/item/{id}', [PanierController::class, 'remove'])->name('panier.remove');
 
     Route::get('/paiements', [AcheteurPaiementController::class, 'index'])->name('paiements.index');
+
+    Route::post('/notifications/read-all', function () {
+    Auth::user()->unreadNotifications->markAsRead();
+    return back()->with('success', 'Tout est marqué comme lu.');
+    })->name('notifications.readAll');
+
+    // Messagerie Acheteur
     Route::get('/messages', [AcheteurConversationController::class, 'index'])->name('conversation.index');
+    Route::get('/messages/{id}', [AcheteurConversationController::class, 'show'])->name('conversation.show');
+    Route::get('/negociation/start/{produit}', [AcheteurConversationController::class, 'start'])->name('conversation.start');
 
     Route::get('/commandes', [CommandeController::class, 'index'])->name('commandes.index');
     Route::post('/commandes', [CommandeController::class, 'store'])->name('commandes.store');
     Route::get('/commandes/{id}', [CommandeController::class, 'show'])->name('commandes.show');
-
-    Route::get('/negociation/start/{produit}', [AcheteurConversationController::class, 'start'])->name('conversation.start');
 
     Route::get('/paiement/{commande}', [AcheteurPaiementController::class, 'show'])->name('paiement.show');
     Route::post('/paiement/{commande}/payer', [AcheteurPaiementController::class, 'payer'])->name('paiement.payer');
@@ -87,21 +94,34 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
 */
 Route::middleware(['auth', 'producteur'])->prefix('producteur')->name('producteur.')->group(function () {
     
+    // DASHBOARD
     Route::get('/dashboard', [ProducteurController::class, 'dashboard'])->name('dashboard');
+
+    // PROFIL (Une seule route pour afficher, une seule pour mettre à jour)
     Route::get('/profil', [ProducteurController::class, 'profil'])->name('profil');
-    Route::post('/profil', [ProducteurController::class, 'updateProfil'])->name('profil.update');
+    Route::put('/profil/update', [ProducteurController::class, 'updateProfil'])->name('profil.update');
 
-    Route::resource('produit', ProduitProducteurController::class)->except(['destroy']);
+    Route::resource('produit', ProduitProducteurController::class);
 
+    // COMMANDES
     Route::get('/commandes', [CommandeProducteurController::class, 'index'])->name('commandes.index');
-    Route::patch('/commandes/{id}/{status}', [CommandeProducteurController::class, 'updateStatus'])->name('commandes.status');
+    Route::get('/commandes/{id}/status/{status}', [CommandeProducteurController::class, 'updateStatus'])->name('commandes.status');
 
+    // MESSAGERIE
+    Route::get('/conversation', [ProducteurConversationController::class, 'index'])->name('conversation.index');
+    Route::get('/conversation/{id}', [ProducteurConversationController::class, 'show'])->name('conversation.show');
     Route::post('/conversation/{id}/accepter', [ProducteurConversationController::class, 'accepterOffre'])->name('conversation.accepter');
     Route::post('/conversation/{id}/refuser', [ProducteurConversationController::class, 'refuser'])->name('conversation.refuser');
 
-    Route::get('/notifications', function() {
-        return Auth::user()->unreadNotifications;
-    })->name('notifications');
+    // NOTIFICATIONS
+    // On utilise la méthode du contrôleur que nous avons créée pour la pagination
+    Route::get('/notifications', [ProducteurController::class, 'notifications'])->name('notifications');
+    
+    Route::post('/notifications/read-all', function () {
+        Auth::user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'Toutes les notifications ont été marquées comme lues.');
+    })->name('notifications.readAll');
+
 });
 
 /*
@@ -121,12 +141,33 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
 
-    // GESTION ET MODÉRATION DES PRODUITS (ADMIN)
+    // --- SECTION NOTIFICATIONS (CORRIGÉE) ---
+    // Le nom final sera automatiquement 'admin.notifications'
+    Route::get('/notifications', function () { 
+        return view('admin.notifications'); 
+    })->name('notifications');
+
+    Route::get('/notifications', function () {
+    // 1. On récupère toutes les notifications de l'admin (paginées)
+    $notifications = Auth::user()->notifications()->paginate(10);
+    
+    // 2. On injecte la variable $notifications dans la vue
+    return view('admin.notifications', compact('notifications'));
+    })->name('notifications');
+
+    // Le nom final sera automatiquement 'admin.notifications.readAll'
+    Route::post('/notifications/read-all', function () {
+        Auth::user()->unreadNotifications->markAsRead();
+        return response()->json(['status' => 'success']);
+    })->name('notifications.readAll');
+    // ----------------------------------------
+
     Route::get('produits', [ProduitAdminController::class, 'index'])->name('produits.index');
     Route::patch('produits/{id}/approve', [ProduitAdminController::class, 'approve'])->name('produits.approve');
     Route::patch('produits/{id}/reject', [ProduitAdminController::class, 'reject'])->name('produits.reject');
     Route::delete('produits/{id}', [ProduitAdminController::class, 'destroy'])->name('produits.destroy');
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -134,12 +175,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/conversation/{id}', [AcheteurConversationController::class, 'show'])->name('conversation.show');
-    Route::post('/conversation/{id}/message', [ConversationMessageController::class, 'store'])->name('conversation.message.store');
+    
+    // Correction du nom de la route pour correspondre à tes formulaires Blade
+    Route::post('/conversation/{id}/message', [ConversationMessageController::class, 'store'])->name('messages.store');
 
     Route::get('/api/notifications-data', function () {
         return response()->json(Auth::user()->unreadNotifications);
-    })->name('producteur.notifications');
+    })->name('notifications.data');
 
     Route::post('/notifications/{id}/read', function ($id) {
         Auth::user()->notifications()->findOrFail($id)->markAsRead();

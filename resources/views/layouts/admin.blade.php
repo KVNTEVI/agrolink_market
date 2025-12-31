@@ -23,43 +23,60 @@
         <div class="p-3 border-bottom text-center text-success fw-bold fs-5">
             <i class="bi bi-shield-check"></i> AgroLink Admin
         </div>
-        <nav class="mt-3">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2"></i> Tableau de bord
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.utilisateurs.index') }}" class="nav-link {{ request()->routeIs('admin.utilisateurs.*') ? 'active' : '' }}">
-                        <i class="bi bi-people"></i> Utilisateurs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                        <i class="bi bi-tags"></i> Catégories
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.produits.index') }}" class="nav-link {{ request()->routeIs('admin.produits.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-seam"></i> Modération Produits
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.paiements.index') }}" class="nav-link {{ request()->routeIs('admin.paiements.*') ? 'active' : '' }}">
-                        <i class="bi bi-credit-card"></i> Paiements
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}" class="mt-4 px-3">
-                        @csrf
-                        <button class="btn btn-outline-danger w-100 btn-sm d-flex align-items-center justify-content-center py-2">
-                            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
+            <nav class="mt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-speedometer2"></i> Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.utilisateurs.index') }}" class="nav-link {{ request()->routeIs('admin.utilisateurs.*') ? 'active' : '' }}">
+                            <i class="bi bi-people"></i> Utilisateurs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                            <i class="bi bi-tags"></i> Catégories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.produits.index') }}" class="nav-link {{ request()->routeIs('admin.produits.*') ? 'active' : '' }}">
+                            <i class="bi bi-box-seam"></i> Modération Produits
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.paiements.index') }}" class="nav-link {{ request()->routeIs('admin.paiements.*') ? 'active' : '' }}">
+                            <i class="bi bi-credit-card"></i> Paiements
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.notifications') }}" class="nav-link {{ request()->routeIs('admin.notifications') ? 'active' : '' }}">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <div>
+                                    <i class="bi bi-bell"></i> Notifications
+                                </div>
+                                @php $notifCount = auth()->user()->unreadNotifications->count(); @endphp
+                                @if($notifCount > 0)
+                                    <span class="badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+                                        {{ $notifCount }}
+                                    </span>
+                                @endif
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}" class="mt-4 px-3">
+                            @csrf
+                            <button class="btn btn-outline-danger w-100 btn-sm d-flex align-items-center justify-content-center py-2">
+                                <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
     </aside>
 
     <main class="main-content">
@@ -73,5 +90,27 @@
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const notifLink = document.querySelector('a[href*="admin/notifications"]');
+        const badge = notifLink ? notifLink.querySelector('.badge') : null;
+
+        if (notifLink && badge) {
+            notifLink.addEventListener('click', function() {
+                // 1. On cache immédiatement le badge pour donner une sensation de rapidité
+                badge.classList.add('d-none');
+
+                // 2. On envoie une requête en arrière-plan pour marquer comme lu en BDD
+                fetch('{{ route("admin.notifications.readAll") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+            });
+        }
+    });
+</script>
 </body>
 </html>

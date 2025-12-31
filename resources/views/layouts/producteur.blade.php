@@ -56,67 +56,75 @@
 
 <div class="wrapper">
 
-    <aside class="sidebar">
-        <div class="p-3 border-bottom text-center text-success fw-bold fs-5">
-            <i class="bi bi-leaf-fill"></i> AgroLink Pro
-        </div>
-        
-        <nav class="mt-3">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a href="{{ route('producteur.dashboard') }}" class="nav-link {{ request()->routeIs('producteur.dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2"></i> Tableau de bord
-                    </a>
-                </li>
+        <aside class="sidebar">
+            <div class="p-3 border-bottom text-center text-success fw-bold fs-5">
+                <i class="bi bi-leaf-fill"></i> AgroLink Pro
+            </div>
+            
+            <nav class="mt-3">
+                <ul class="nav flex-column">
+                    {{-- Tableau de bord --}}
+                    <li class="nav-item">
+                        <a href="{{ route('producteur.dashboard') }}" class="nav-link {{ request()->routeIs('producteur.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-speedometer2"></i> Tableau de bord
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('producteur.produit.index') }}" class="nav-link {{ request()->routeIs('producteur.produit.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-seam"></i> Mes produits
-                    </a>
-                </li>
+                    {{-- Gestion des Produits --}}
+                    <li class="nav-item">
+                        {{-- Utilisation de produit.* pour englober index, create, edit --}}
+                        <a href="{{ route('producteur.produit.index') }}" class="nav-link {{ request()->routeIs('producteur.produit.*') ? 'active' : '' }}">
+                            <i class="bi bi-box-seam"></i> Mes produits
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('producteur.commandes.index') }}" class="nav-link {{ request()->routeIs('producteur.commandes.*') ? 'active' : '' }}">
-                        <i class="bi bi-bag-check"></i> Commandes reçues
-                    </a>
-                </li>
+                    {{-- Gestion des Commandes --}}
+                    <li class="nav-item">
+                        <a href="{{ route('producteur.commandes.index') }}" class="nav-link {{ request()->routeIs('producteur.commandes.*') ? 'active' : '' }}">
+                            <i class="bi bi-bag-check"></i> Commandes reçues
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-chat-dots"></i> Messagerie
-                    </a>
-                </li>
+                    {{-- Messagerie / Négociations --}}
+                    <li class="nav-item">
+                        <a href="{{ route('producteur.conversation.index') }}"  class="nav-link {{ request()->routeIs('producteur.conversation.*') ? 'active' : '' }}">
+                            <i class="bi bi-chat-dots"></i> Messagerie
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                   <a href="#" class="nav-link d-flex justify-content-between align-items-center">
-                        <div>
-                            <i class="bi bi-bell"></i> Notifications
-                        </div>
-                        @if(auth()->user()->unreadNotifications->count())
-                            <span class="badge bg-danger rounded-pill" id="sidebar-notification-badge">
-                                {{ auth()->user()->unreadNotifications->count() }}
-                            </span>
-                        @endif
-                    </a>
-                </li>
+                    {{-- Notifications --}}
+                    <li class="nav-item">
+                        <a href="{{ route('producteur.notifications') }}" class="nav-link {{ request()->routeIs('producteur.notifications') ? 'active' : '' }} d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-bell"></i> Notifications
+                            </div>
+                            @if(auth()->user()->unreadNotifications->count())
+                                <span class="badge bg-danger rounded-pill" id="sidebar-notification-badge">
+                                    {{ auth()->user()->unreadNotifications->count() }}
+                                </span>
+                            @endif
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('producteur.profil') }}" class="nav-link {{ request()->routeIs('producteur.profil') ? 'active' : '' }}">
-                        <i class="bi bi-person-circle"></i> Mon profil
-                    </a>
-                </li>
+                    {{-- Profil --}}
+                    <li class="nav-item">
+                        <a href="{{ route('producteur.profil') }}" class="nav-link {{ request()->routeIs('producteur.profil') ? 'active' : '' }}">
+                            <i class="bi bi-person-circle"></i> Mon profil
+                        </a>
+                    </li>
 
-                <li class="mt-4 px-3">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="btn btn-outline-danger w-100 btn-sm d-flex align-items-center justify-content-center py-2">
-                            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
-    </aside>
+                    {{-- Déconnexion --}}
+                    <li class="mt-4 px-3">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="btn btn-outline-danger w-100 btn-sm d-flex align-items-center justify-content-center py-2">
+                                <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
     <main class="main-content">
         @include('partials.navbar') <div class="p-4">

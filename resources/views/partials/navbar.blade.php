@@ -34,7 +34,7 @@
 
                 <a href="{{ route('acheteur.panier.index') }}" class="nav-link position-relative">
                     <i class="bi bi-cart"></i>
-                    @if($panierCount > 0)
+                    @if(isset($panierCount) && $panierCount > 0)
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             {{ $panierCount }}
                         </span>
@@ -56,7 +56,7 @@
                             <i class="bi bi-bell "></i>
 
                             @if(auth()->user()->unreadNotifications->count())
-                                <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ auth()->user()->unreadNotifications->count() == 0 ? 'd-none' : '' }}" style="font-size: 0.6rem;">
+                                <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
                                 {{ auth()->user()->unreadNotifications->count() }}
                                 </span>
                             @endif
@@ -64,24 +64,43 @@
 
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="width:320px">
                             <li class="px-3 py-2 fw-bold border-bottom">Notifications</li>
+                            
                             @forelse(auth()->user()->unreadNotifications as $notification)
                                 <li class="px-3 py-2 border-bottom">
+                                    @php
+                                        // Détermination dynamique de la route selon le type de notification
+                                        $targetRoute = '#';
+                                        if (isset($notification->data['conversation_id'])) {
+                                            $targetRoute = route(auth()->user()->role_id == 3 
+                                                ? 'producteur.conversation.show' 
+                                                : 'acheteur.conversation.show', 
+                                                $notification->data['conversation_id']);
+                                        } elseif (isset($notification->data['commande_id'])) {
+                                            $targetRoute = auth()->user()->role_id == 3 
+                                                ? route('producteur.commandes.index') 
+                                                : route('acheteur.commandes.show', $notification->data['commande_id']);
+                                        }
+                                    @endphp
 
-                                    <a href="{{ route('conversation.show', $notification->data['conversation_id']) }}" 
-                                    class="text-decoration-none text-dark">
+                                    <a href="{{ $targetRoute }}" class="text-decoration-none text-dark">
+                                        <div class="small text-muted">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </div>
 
-                                    <div class="small text-muted">
-                                        {{ $notification->created_at->diffForHumans() }}
-                                    </div>
+                                        <div class="fw-semibold" style="font-size: 0.85rem;">
+                                            {{ $notification->data['message'] ?? 'Nouvelle notification' }}
+                                        </div>
 
-                                    <div class="fw-semibold">
-                                        {{ $notification->data['message'] ?? 'Nouvelle négociation' }}
-                                    </div>
+                                        @if(isset($notification->data['montant']))
+                                            <div class="small text-success fw-bold">
+                                                {{ number_format($notification->data['montant'], 0, ',', ' ') }} FCFA
+                                            </div>
+                                        @endif
+                                    </a>
 
-                                    <form method="POST"
-                                          action="{{ route('producteur.notifications.read',$notification->id) }}">
+                                    <form method="POST" action="{{ route('producteur.notifications.read', $notification->id) }}" class="mt-1">
                                         @csrf
-                                        <button class="btn btn-sm btn-link p-0 text-decoration-none" style="font-size: 0.7rem;">
+                                        <button class="btn btn-sm btn-link p-0 text-decoration-none text-muted" style="font-size: 0.65rem;">
                                             Marquer comme lu
                                         </button>
                                     </form>
@@ -112,7 +131,6 @@
                       <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                             <li>
                                 @php
-                                    // On fait correspondre le nom en BDD avec le nom de la route
                                     $routeName = match(Auth::user()->role->nom_role) {
                                         'administrateur' => 'admin.dashboard',
                                         'producteur'     => 'producteur.dashboard',

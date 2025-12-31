@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Commande; 
 use App\Models\Produit;  
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class ProducteurController extends Controller
 {
@@ -19,8 +21,6 @@ class ProducteurController extends Controller
     {
         $userId = Auth::id(); 
 
-        // 1. Statistiques du haut (KPIs)
-        // Note: On utilise 'montant_total' selon ton modèle Commande
         $chiffreAffaires = Commande::where('producteur_id', $userId)
             ->where('statut', 'payé')
             ->sum('montant_total');
@@ -32,15 +32,12 @@ class ProducteurController extends Controller
         $totalProduits = Produit::where('producteur_id', $userId)->count();
         $satisfaction = 92; 
 
-        // 2. Données pour les tableaux
-        // On récupère les 4 dernières commandes avec l'acheteur
         $commandesRecentes = Commande::where('producteur_id', $userId)
             ->with('acheteur')
             ->latest()
             ->take(4)
             ->get();
 
-        // Alertes Stock : On utilise 'stock' selon ton modèle Produit
         $alertesStock = Produit::where('producteur_id', $userId)
             ->where('stock', '<', 5)
             ->get();
@@ -55,8 +52,44 @@ class ProducteurController extends Controller
         ));
     }
 
+    public function notifications()
+    {
+        $notifications = Auth::user()->notifications()->paginate(10);
+        return view('producteur.notifications', compact('notifications'));
+    }
+
     public function profil() 
     { 
-        return view('producteur.profil', ['user' => Auth::user()]); 
+        return view('producteur.profil.index', ['user' => Auth::user()]); 
+    }
+
+    // NOUVELLE MÉTHODE : Mise à jour du profil
+    public function updateProfil(Request $request)
+    {
+        $user = Auth::user();
+
+        // 1. Validation des données
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'email' => 'required|email|unique:utilisateurs,email,' . $user->id_utilisateur . ',id_utilisateur',
+            'telephone' => 'nullable|string|max:20',
+            'adresse' => 'nullable|string|max:500',
+            'password' => ['nullable', 'confirmed', Password::min(8)],
+        ]);
+
+        // 2. Mise à jour des informations de base
+        $user->nom = $request->nom;
+        $user->email = $request->email;
+        $user->telephone = $request->telephone;
+        $user->adresse = $request->adresse;
+
+        // 3. Mise à jour du mot de passe (uniquement si rempli)
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Votre profil a été mis à jour avec succès !');
     }
 }

@@ -1,124 +1,76 @@
-@extends('layouts.acheteur')
-
-@section('title', 'Négociation - ' . $conversation->produit->nom)
+@extends(Auth::user()->role_id == 3 ? 'layouts.producteur' : 'layouts.acheteur')
 
 @section('content')
-<div class="container-fluid py-4">
-
-    {{-- Fil d'ariane / Retour --}}
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('acheteur.conversation.index') }}" class="text-success text-decoration-none">Messages</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Négociation #{{ $conversation->id_conversation }}</li>
-        </ol>
-    </nav>
-
-    {{-- En-tête conversation --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body d-flex justify-content-between align-items-center py-3">
+<div class="container py-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
-                <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
-                    <i class="bi bi-chat-dots text-success fs-4"></i>
-                </div>
+                <img src="{{ asset('images/produits/' . $conversation->produit->image) }}" class="rounded-3 me-3" width="50" height="50" style="object-fit: cover;">
                 <div>
-                    <h5 class="mb-0 fw-bold text-dark">
-                        {{ $conversation->produit->nom_produit ?? $conversation->produit->nom }}
-                    </h5>
-                    <div class="mt-1">
-                        @if($conversation->statut === 'ouverte')
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3">
-                                <i class="bi bi-unlock me-1"></i> Discussion ouverte
-                            </span>
-                        @elseif($conversation->statut === 'accord' || $conversation->statut === 'accord_trouve')
-                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary rounded-pill px-3">
-                                <i class="bi bi-check-circle me-1"></i> Accord trouvé
-                            </span>
-                        @else
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary rounded-pill px-3">
-                                <i class="bi bi-lock me-1"></i> Clôturée
-                            </span>
-                        @endif
-                    </div>
+                    <h6 class="fw-bold mb-0">{{ $conversation->produit->nom }}</h6>
+                    <small class="text-muted">
+                        {{ Auth::user()->role_id == 3 ? 'Acheteur : ' . $conversation->acheteur->nom : 'Producteur : ' . $conversation->producteur->nom }}
+                    </small>
                 </div>
             </div>
             
-            @if($conversation->prix_final)
-                <div class="text-end">
-                    <span class="text-muted d-block small">Prix final</span>
-                    <span class="badge bg-success fs-5 px-3 py-2 rounded-4">
-                        {{ number_format($conversation->prix_final, 0, ',', ' ') }} FCFA
-                    </span>
+            @if(Auth::user()->role_id == 3 && $conversation->statut == 'ouverte')
+                <div class="d-flex gap-2">
+                    <form action="{{ route('producteur.conversation.accepter', $conversation->id_conversation) }}" method="POST">
+                        @csrf
+                        <button class="btn btn-success btn-sm rounded-pill px-3">Accepter l'offre</button>
+                    </form>
+                    <form action="{{ route('producteur.conversation.refuser', $conversation->id_conversation) }}" method="POST">
+                        @csrf
+                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3">Refuser</button>
+                    </form>
                 </div>
             @endif
         </div>
-    </div>
 
-    {{-- Zone de Messages --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-        <div class="card-body bg-light bg-opacity-50 p-4" id="chat-container" style="height: 450px; overflow-y: auto;">
-            @forelse($conversation->messages as $message)
-                <div class="mb-4 d-flex {{ $message->expediteur_id === auth()->id() ? 'justify-content-end' : 'justify-content-start' }}">
-                    <div class="shadow-sm p-3 {{ $message->expediteur_id === auth()->id() ? 'bg-success text-white rounded-start-4 rounded-bottom-4' : 'bg-white text-dark rounded-end-4 rounded-bottom-4' }}" style="max-width: 75%;">
-                        <div class="small fw-bold mb-1 d-flex align-items-center">
-                            <i class="bi bi-person-circle me-2"></i>
-                            {{ $message->expediteur_id === auth()->id() ? 'Moi' : $message->expediteur->nom }}
+        <div id="chat-box" class="card-body bg-light p-4" style="height: 450px; overflow-y: auto;">
+            @foreach($conversation->messages as $msg)
+                <div class="d-flex {{ $msg->expediteur_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }} mb-3">
+                    <div class="max-width-75">
+                        <div class="p-3 rounded-4 {{ $msg->expediteur_id == Auth::id() ? 'bg-primary text-white shadow-sm' : 'bg-white border' }}">
+                            @if($msg->prix_propose)
+                                <div class="badge {{ $msg->expediteur_id == Auth::id() ? 'bg-white text-primary' : 'bg-warning text-dark' }} mb-2">
+                                    Offre : {{ number_format($msg->prix_propose, 0, ',', ' ') }} FCFA
+                                </div><br>
+                            @endif
+                            <p class="mb-0">{{ $msg->contenu }}</p>
                         </div>
-
-                        @if($message->contenu)
-                            <p class="mb-0">{{ $message->contenu }}</p>
-                        @endif
-
-                        @if($message->prix_propose)
-                            <div class="mt-2 p-2 rounded {{ $message->expediteur_id === auth()->id() ? 'bg-white bg-opacity-20' : 'bg-light' }} border border-white border-opacity-10 fw-bold">
-                                <i class="bi bi-tag-fill me-1"></i>
-                                Offre : {{ number_format($message->prix_propose, 0, ',', ' ') }} FCFA
-                            </div>
-                        @endif
-
-                        <div class="text-end mt-2 opacity-50" style="font-size: 0.75rem;">
-                            {{ $message->created_at->format('H:i') }}
-                        </div>
+                        <small class="text-muted d-block mt-1 {{ $msg->expediteur_id == Auth::id() ? 'text-end' : '' }}">
+                            {{ $msg->created_at->format('H:i') }}
+                        </small>
                     </div>
                 </div>
-            @empty
-                <div class="text-center text-muted py-5">
-                    <i class="bi bi-chat-quote fs-1 d-block mb-3 opacity-25"></i>
-                    Dites bonjour pour commencer la négociation !
-                </div>
-            @endforelse
+            @endforeach
         </div>
 
-        {{-- Formulaire d'envoi --}}
-        <div class="card-footer bg-white border-0 p-4">
-            @if($conversation->statut === 'ouverte')
-                <form action="{{ route('conversation.message.store', $conversation->id_conversation) }}" method="POST">
+        <div class="card-footer bg-white p-3">
+            @if($conversation->statut == 'ouverte')
+                <form action="{{ route('messages.store', $conversation->id_conversation) }}" method="POST">
                     @csrf
-                    <div class="row g-3">
-                        <div class="col-md-7">
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-0"><i class="bi bi-chat-left-text text-muted"></i></span>
-                                <input type="text" name="contenu" class="form-control bg-light border-0 py-2" placeholder="Écrire un message..." required>
-                            </div>
-                        </div>
+                    <div class="row g-2">
                         <div class="col-md-3">
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-0"><i class="bi bi-cash text-muted"></i></span>
-                                <input type="number" name="prix_propose" class="form-control bg-light border-0 py-2" placeholder="Proposer un prix">
+                                <input type="number" name="prix_propose" class="form-control rounded-pill-start bg-light" placeholder="Prix (FCFA)">
                             </div>
                         </div>
-                        <div class="col-md-2 d-grid">
-                            <button class="btn btn-success rounded-3 shadow-sm py-2">
-                                <i class="bi bi-send-fill me-1"></i> Envoyer
-                            </button>
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <input type="text" name="contenu" class="form-control bg-light" placeholder="Écrivez votre message..." required>
+                                <button type="submit" class="btn btn-primary rounded-pill-end px-4">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </form>
             @else
-                <div class="alert alert-info border-0 rounded-4 d-flex align-items-center mb-0">
-                    <i class="bi bi-info-circle-fill me-3 fs-4"></i>
-                    <div>
-                        <strong>Négociation terminée.</strong> Le canal de discussion est désormais fermé aux nouveaux messages.
-                    </div>
+                <div class="alert alert-secondary text-center mb-0 rounded-pill">
+                    <i class="bi bi-lock-fill me-2"></i> Cette négociation est terminée.
                 </div>
             @endif
         </div>
@@ -126,10 +78,8 @@
 </div>
 
 <script>
-    // Faire défiler vers le bas automatiquement au chargement
-    document.addEventListener("DOMContentLoaded", function() {
-        var container = document.getElementById('chat-container');
-        container.scrollTop = container.scrollHeight;
-    });
+    // Scroller automatiquement vers le bas à l'ouverture
+    const chatBox = document.getElementById('chat-box');
+    chatBox.scrollTop = chatBox.scrollHeight;
 </script>
 @endsection
