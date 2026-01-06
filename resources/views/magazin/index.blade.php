@@ -2,13 +2,19 @@
 
 @section('content')
 
+{{-- NOUVEL EN-TÊTE HARMONISÉ --}}
+<section class="bg-success bg-opacity-10 py-5 text-center">
+    <div class="container">
+        <h2 class="text-success fw-bold">Nos Producteurs</h2>
+        <p class="mt-2 text-dark">
+            Découvrez les passionnés qui nourrissent notre communauté. Des produits frais, directement de la terre à votre table.
+        </p>
+    </div>
+</section>
+
+{{-- TA SECTION ORIGINALE GARDÉE TELLE QUELLE --}}
 <section class="py-5">
     <div class="container">
-
-        <h2 class="fw-bold text-center mb-4">
-            Nos Producteurs
-        </h2>
-
         <div class="row g-4">
 
             @forelse($producteurs as $producteur)
@@ -23,7 +29,7 @@
                             style="object-fit: cover;"
                             alt="{{ $producteur->nom }}">
 
-                            <h5 class="fw-bold">
+                            <h5 class="fw-bold mt-3">
                                 {{ $producteur->nom }}
                             </h5>
 
@@ -40,14 +46,17 @@
                     </div>
                 </div>
             @empty
-                <p class="text-center text-muted">
-                    Aucun producteur disponible pour le moment.
-                </p>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">
+                        Aucun producteur disponible pour le moment.
+                    </p>
+                </div>
             @endforelse
 
         </div>
-
     </div>
 </section>
+
+
 
 @endsection

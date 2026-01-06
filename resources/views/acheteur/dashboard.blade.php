@@ -25,7 +25,7 @@
                     </div>
                     <div>
                         <small class="text-muted d-block">Commandes en cours</small>
-                        <h4 class="mb-0 fw-bold">2</h4>
+                        <h4 class="mb-0 fw-bold">{{ $commandesEnCoursCount }}</h4>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                     </div>
                     <div>
                         <small class="text-muted d-block">Messages</small>
-                        <h4 class="mb-0 fw-bold">3</h4>
+                        <h4 class="mb-0 fw-bold">{{ $messagesCount }}</h4>
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                     </div>
                     <div>
                         <small class="text-muted d-block">Notifications</small>
-                        <h4 class="mb-0 fw-bold">2</h4>
+                        <h4 class="mb-0 fw-bold">{{ $unreadNotificationsCount }}</h4>
                     </div>
                 </div>
             </div>
@@ -81,49 +81,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- Exemple 1 --}}
+                        @forelse($dernieresCommandes as $commande)
                         <tr>
-                            <td class="ps-4 fw-bold text-dark">CMD-001</td>
+                            <td class="ps-4 fw-bold text-dark">#{{ $commande->id_commande }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <span class="fw-semibold">Soja</span>
+                                    <span class="fw-semibold">{{ $commande->produit->nom ?? 'Produit inconnu' }}</span>
                                 </div>
                             </td>
-                            <td>2 Tonnes</td>
-                            <td><span class="fw-bold">150 000 FCFA</span></td>
+                            <td>{{ $commande->quantite }}</td>
+                            <td><span class="fw-bold">{{ number_format($commande->prix_total, 0, ',', ' ') }} FCFA</span></td>
                             <td>
-                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning rounded-pill px-3" style="font-size: 0.7rem;">
-                                    En attente
+                                @php
+                                    $badgeClass = match($commande->statut) {
+                                        'en_attente' => 'bg-warning text-warning',
+                                        'expedie'    => 'bg-info text-info',
+                                        'livre'      => 'bg-success text-success',
+                                        'annule'     => 'bg-danger text-danger',
+                                        default      => 'bg-secondary text-secondary'
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }} bg-opacity-10 border rounded-pill px-3" style="font-size: 0.7rem;">
+                                    {{ ucfirst(str_replace('_', ' ', $commande->statut)) }}
                                 </span>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="#" class="btn btn-sm btn-light rounded-circle text-primary shadow-sm">
+                                <a href="{{ route('acheteur.commandes.show', $commande->id_commande) }}" class="btn btn-sm btn-light rounded-circle text-primary shadow-sm">
                                     <i class="bi bi-eye"></i>
                                 </a>
                             </td>
                         </tr>
-
-                        {{-- Exemple 2 --}}
+                        @empty
                         <tr>
-                            <td class="ps-4 fw-bold text-dark">CMD-002</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <span class="fw-semibold">Anacarde</span>
-                                </div>
-                            </td>
-                            <td>1 Tonne</td>
-                            <td><span class="fw-bold">200 000 FCFA</span></td>
-                            <td>
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3" style="font-size: 0.7rem;">
-                                    Expédié
-                                </span>
-                            </td>
-                            <td class="text-end pe-4">
-                                <a href="#" class="btn btn-sm btn-light rounded-circle text-primary shadow-sm">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
+                            <td colspan="6" class="text-center py-4 text-muted">Vous n'avez pas encore de commandes.</td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

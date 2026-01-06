@@ -103,7 +103,7 @@
                                 </div>
 
                                 <div class="mt-4 pt-3 text-end">
-                                    <button type="submit" class="btn btn-success rounded-pill px-5 shadow-sm py-2">
+                                    <button type="submit" class="btn btn-success px-5 shadow-sm py-2">
                                         <i class="bi bi-save me-2"></i> Mettre à jour le profil
                                     </button>
                                 </div>

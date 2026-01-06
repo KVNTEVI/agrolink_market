@@ -74,8 +74,9 @@
                                     </p>
 
                                     <p class="fw-bold text-success">
-                                        {{ number_format($produit->prix_unitaire, 0, ',', ' ') }} FCFA
+                                        {{ number_format($produit->prix_unitaire, 0, ',', ' ') }} FCFA<span class="text-muted"> / Kg</span>
                                     </p>
+                                    
 
                                     <a href="{{ route('boutique.show', $produit->id_produit) }}"
                                        class="btn btn-outline-success mt-auto">

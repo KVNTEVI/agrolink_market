@@ -15,13 +15,47 @@
         .main-content { flex: 1; background-color: #f9fafb; }
         .card-stats { border: none; border-radius: 12px; transition: transform 0.3s; }
         .card-stats:hover { transform: translateY(-5px); }
+                /* Couleur de base et forçage du survol en vert */
+        .navbar-nav .nav-link {
+            color: #4b5563 !important; /* Gris foncé de base */
+            transition: color 0.3s ease !important;
+        }
+
+        /* Force le vert au passage de la souris */
+        .navbar-nav .nav-link:hover {
+            color: #198754 !important; /* Vert Succès */
+        }
+
+        /* Force le vert si le lien est actif */
+        .navbar-nav .nav-link.active {
+            color: #198754 !important;
+            font-weight: 600;
+        }
+
+        /* Animation optionnelle : petit trait vert sous le lien au survol */
+        .navbar-nav .nav-link {
+            position: relative;
+            font-weight: 500;
+        }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #198754;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
     </style>
 </head>
 <body>
 <div class="wrapper">
     <aside class="sidebar">
         <div class="p-3 border-bottom text-center text-success fw-bold fs-5">
-            <i class="bi bi-shield-check"></i> AgroLink Admin
+            <i class="bi bi-shield-check"></i> Administrateur
         </div>
             <nav class="mt-3">
                 <ul class="nav flex-column">

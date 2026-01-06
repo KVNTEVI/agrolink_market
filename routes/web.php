@@ -50,6 +50,7 @@ Route::get('/magazin/producteur/{id}/produits', [MagazinController::class, 'prod
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 Route::get('/apropos', function () { return view('apropos.index'); })->name('apropos');
+Route::get('/conditions-generales', function () { return view('legal.cgu'); })->name('cgu');
 
 /*
 |--------------------------------------------------------------------------

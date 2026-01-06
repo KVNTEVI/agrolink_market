@@ -21,27 +21,27 @@ class AcheteurController extends Controller
         /** @var \App\Models\Utilisateur $user */
         $user = Auth::user();
 
-        // 1. Nombre de notifications non lues
+        // 1. Statistiques
         $unreadNotificationsCount = $user->unreadNotifications->count();
-
-        // 2. Nombre de messages (conversations actives)
         $messagesCount = \App\Models\Conversation::where('acheteur_id', $user->id_utilisateur)->count();
+        
+        // Ajout : Nombre de commandes en cours
+        $commandesEnCoursCount = \App\Models\Commande::where('acheteur_id', $user->id_utilisateur)
+            ->whereIn('statut', ['en_attente', 'expedie'])
+            ->count();
 
-        // 3. Historique des paiements de l'acheteur
-        // On récupère les paiements via les commandes passées par cet acheteur
-        $paiements = \App\Models\Paiement::whereHas('commande', function($query) use ($user) {
-            // Note : Assurez-vous que la colonne est bien 'id_utilisateur' ou 'acheteur_id' dans votre table commandes
-            $query->where('acheteur_id', $user->id_utilisateur);
-        })->with('commande')->latest()->get();
-
-        // 4. Notifications récentes (3 dernières) pour l'affichage rapide
-        $recentNotifications = $user->notifications()->take(3)->get();
+        // 2. Récupérer les dernières commandes pour le tableau
+        $dernieresCommandes = \App\Models\Commande::where('acheteur_id', $user->id_utilisateur)
+            ->with('produit')
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('acheteur.dashboard', compact(
             'unreadNotificationsCount', 
             'messagesCount', 
-            'paiements', 
-            'recentNotifications'
+            'commandesEnCoursCount',
+            'dernieresCommandes'
         ));
     }
 

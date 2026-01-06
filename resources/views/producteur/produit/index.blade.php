@@ -11,7 +11,7 @@
             <h4 class="fw-bold text-dark mb-1">Gestion du catalogue</h4>
             <p class="text-muted small mb-0">Vous avez actuellement {{ $produits->count() }} produits enregistrés.</p>
         </div>
-        <a href="{{ route('producteur.produit.create') }}" class="btn btn-success rounded-pill px-4 shadow-sm">
+        <a href="{{ route('producteur.produit.create') }}" class="btn btn-success px-4 shadow-sm">
             <i class="bi bi-plus-lg me-2"></i> Ajouter un produit
         </a>
     </div>

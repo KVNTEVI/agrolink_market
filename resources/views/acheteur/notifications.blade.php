@@ -105,6 +105,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-3">
+            {{ $allNotifications->links() }}
+        </div>
     </div>
 </div>
 

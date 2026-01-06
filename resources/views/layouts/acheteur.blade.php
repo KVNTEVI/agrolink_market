@@ -54,6 +54,40 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
         }
+
+        /* Couleur de base et forçage du survol en vert */
+        .navbar-nav .nav-link {
+            color: #4b5563 !important; /* Gris foncé de base */
+            transition: color 0.3s ease !important;
+        }
+
+        /* Force le vert au passage de la souris */
+        .navbar-nav .nav-link:hover {
+            color: #198754 !important; /* Vert Succès */
+        }
+
+        /* Force le vert si le lien est actif */
+        .navbar-nav .nav-link.active {
+            color: #198754 !important;
+            font-weight: 600;
+        }
+
+        /* Animation optionnelle : petit trait vert sous le lien au survol */
+        .navbar-nav .nav-link {
+            position: relative;
+            font-weight: 500;
+        }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #198754;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body>

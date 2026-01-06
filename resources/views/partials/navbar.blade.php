@@ -14,19 +14,19 @@
 
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Accueil</a>
+                    <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('apropos') }}">À propos</a>
+                    <a class="nav-link {{ Request::routeIs('apropos') ? 'active' : '' }}" href="{{ route('apropos') }}">A propos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('boutique.index') }}">Boutique</a>
+                    <a class="nav-link {{ Request::routeIs('boutique.index') ? 'active' : '' }}" href="{{ route('boutique.index') }}">Boutique</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('magazin.index') }}">Magazin</a>
+                    <a class="nav-link {{ Request::routeIs('magazin.index') ? 'active' : '' }}" href="{{ route('magazin.index') }}">Magazin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('contact.index') }}">Contact</a>
+                    <a class="nav-link {{ Request::routeIs('contact.index') ? 'active' : '' }}" href="{{ route('contact.index') }}">Contact</a>
                 </li>
             </ul>
 

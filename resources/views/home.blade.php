@@ -96,7 +96,7 @@
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title fw-bold">{{ $produit->nom }}</h6>
                         <p class="text-success fw-bold">
-                            {{ number_format($produit->prix_unitaire, 0, ',', ' ') }} FCFA
+                            {{ number_format($produit->prix_unitaire, 0, ',', ' ') }} FCFA <span class="text-muted"> / Kg</span>
                         </p>
                         <a href="{{ route('boutique.show', $produit->id_produit) }}" 
                            class="btn btn-sm btn-success mt-auto">

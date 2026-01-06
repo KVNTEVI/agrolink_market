@@ -1,4 +1,4 @@
-<footer class="bg-success bg-opacity-10 text-light pt-5 mt-5">
+<footer class="bg-white pt-5 mt-0 border-top">
     <div class="container">
         <div class="row gy-4">
 
@@ -32,10 +32,10 @@
                 <h6 class="text-body fw-bold">Navigation</h6>
                 <ul class="list-unstyled">
                     <li><a href="{{ route('home') }}" class="text-muted text-decoration-none footer-link">Accueil</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none footer-link">À propos</a></li>
+                    <li><a href="{{ route('apropos') }}" class="text-muted text-decoration-none footer-link">A propos</a></li>
                     <li><a href="{{ route('boutique.index') }}" class="text-muted text-decoration-none footer-link">Boutique</a></li>
                     <li><a href="{{ route('magazin.index') }}" class="text-muted text-decoration-none footer-link">Magazin</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none footer-link">Contact</a></li>
+                    <li><a href="{{ route('contact.index') }}" class="text-muted text-decoration-none footer-link">Contact</a></li>
                 </ul>
             </div>
 

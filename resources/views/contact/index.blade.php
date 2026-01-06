@@ -3,7 +3,7 @@
 @section('content')
 
 <!-- HERO CONTACT -->
-<section class="bg-success bg-opacity-10 py-5 text-center" style="background-color:#F9C79A;">
+<section class="bg-success bg-opacity-10 py-5 text-center" >
     <div class="container">
         <h2 class="text-success fw-bold">Contactez-nous</h2>
         <p class="mt-2">

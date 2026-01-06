@@ -11,37 +11,73 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- CSS PERSONNALISÉ -->
-    <style>
+<style>
+    /* 1. Cible les liens de la navbar horizontale */
+    .navbar-nav .nav-link {
+        transition: color 0.3s ease;
+        color: #4b5563 !important; /* Gris foncé par défaut */
+        font-weight: 500;
+    }
 
-        /* Cible les liens de la navbar */
-        .navbar-nav .nav-link {
-            transition: color 0.3s ease;
-            color: #4b5563 !important; /* Gris foncé par défaut */
-        }
+    /* 2. Effet au survol (HOVER) ET état ACTIF (page actuelle) */
+    .navbar-nav .nav-link:hover, 
+    .navbar-nav .nav-link.active {
+        color: #198754 !important; /* Le vert "success" */
+    }
 
-        /* Effet au survol */
-        .navbar-nav .nav-link:hover {
-            color: #198754 !important; /* Le vert "success" */
-        }
+    /* 3. Petit trait vert optionnel sous le lien actif pour un look moderne */
+    .navbar-nav .nav-link.active {
+        border-bottom: 2px solid #198754;
+        padding-bottom: 4px;
+    }
 
-        /* Style pour les liens du footer */
-        a.footer-link {
-            transition: color 0.3s ease; /* Animation douce pour le changement de couleur */
-        }
+    /* 4. Style pour les liens du footer */
+    a.footer-link {
+        transition: color 0.3s ease;
+        text-decoration: none;
+        color: inherit; /* Garde la couleur du parent par défaut */
+    }
 
-        a.footer-link:hover {
-            color: #198754 !important; /* Le vert 'success' de Bootstrap */
-            text-decoration: underline !important; /* Optionnel : souligne au survol */
-        }
+    a.footer-link:hover {
+        color: #198754 !important;
+        text-decoration: underline !important;
+    }
 
-        .hover-card {
-            transition: all 0.3s ease;
-        }
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
-        }
-    </style>
+    .navbar-nav .nav-link {
+    position: relative;
+    }
+
+    .navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #198754;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    }
+
+    /* 5. Animation des cartes (Boutique/Dashboard) */
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+    }
+
+    /* 6. Correction pour les icônes dans la navbar (cloche, panier) */
+    .nav-link i {
+        transition: color 0.3s ease;
+    }
+    
+    .nav-link:hover i {
+        color: #198754 !important;
+    }
+</style>
 </head>
 
 <body>

@@ -15,7 +15,7 @@
     }
 
     .register-header {
-        background-color: #27ae60;
+        background-color: #198754;
         color: white;
         text-align: center;
         padding: 1.5rem;
@@ -28,7 +28,7 @@
     }
 
     .btn-register {
-        background-color: #27ae60;
+        background-color: #198754;
         border: none;
         padding: 12px;
         font-weight: 600;
@@ -36,7 +36,7 @@
     }
 
     .btn-register:hover {
-        background-color: #219150;
+        background-color: #198754;
         transform: translateY(-1px);
     }
 
@@ -46,7 +46,7 @@
     }
 
     .login-link {
-        color: #27ae60;
+        color: #198754;
         text-decoration: none;
     }
 
@@ -96,10 +96,35 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label d-block text-center mb-3">Quel type de compte souhaitez-vous créer ?</label>
+                            <div class="d-flex gap-3">
+                                <div class="flex-fill">
+                                    <input type="radio" class="btn-check" name="role_id" id="role_acheteur" value="2" checked>
+                                    <label class="btn btn-outline-success w-100 py-3 shadow-sm" for="role_acheteur">
+                                        <i class="bi bi-basket2-fill d-block mb-1 fs-3"></i>
+                                        <span class="fw-bold">Acheteur</span>
+                                        <small class="d-block text-muted" style="font-size: 0.7rem;">Je veux acheter</small>
+                                    </label>
+                                </div>
+                                <div class="flex-fill">
+                                    <input type="radio" class="btn-check" name="role_id" id="role_producteur" value="3">
+                                    <label class="btn btn-outline-success w-100 py-3 shadow-sm" for="role_producteur">
+                                        <i class="bi bi-truck d-block mb-1 fs-3"></i>
+                                        <span class="fw-bold">Producteur</span>
+                                        <small class="d-block text-muted" style="font-size: 0.7rem;">Je veux vendre</small>
+                                    </label>
+                                </div>
+                            </div>
+                            @error('role_id')
+                                <span class="text-danger small"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">{{ __('Mot de passe') }}</label>
                             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" 
-                                   name="password" placeholder="••••••••" required autocomplete="new-password">
+                                   name="password" placeholder="Saisir ton mot de passe" required autocomplete="new-password">
 
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
@@ -111,7 +136,19 @@
                         <div class="col-md-6 mb-4">
                             <label for="password-confirm" class="form-label">{{ __('Confirmer le mot de passe') }}</label>
                             <input id="password-confirm" type="password" class="form-control" 
-                                   name="password_confirmation" placeholder="••••••••" required autocomplete="new-password">
+                                   name="password_confirmation" placeholder="Confirmer ton mot de passe" required autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox" name="terms" id="terms" required>
+                            <label class="form-check-label small text-muted" for="terms">
+                                J'accepte les <a href="{{ route('cgu') }}" target="_blank" class="login-link">conditions générales d'utilisation</a> d'AgroLink Market.
+                            </label>
+                            @error('terms')
+                                <span class="invalid-feedback"><strong>Vous devez accepter les conditions.</strong></span>
+                            @enderror
                         </div>
                     </div>
 
@@ -128,10 +165,6 @@
                 </form>
             </div>
         </div>
-
-        <p class="text-center text-muted mt-4">
-            <small>© {{ date('Y') }} <strong>AgroLink Market</strong>. Tous droits réservés.</small>
-        </p>
     </div>
 </div>
 
