@@ -73,7 +73,7 @@
 
                             <!-- Bouton -->
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success btn-lg">
+                                <button type="submit" class="btn btn-success">
                                     Envoyer le message
                                 </button>
                             </div>

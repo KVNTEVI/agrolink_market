@@ -40,7 +40,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-wallet2 me-2 text-secondary"></i>
-                                    <span class="text-uppercase small fw-semibold text-muted">{{ $paiement->mode }}</span>
+                                    <span class="text-uppercase small fw-semibold text-muted">{{ $paiement->mode ?? 'Inconnu' }}</span>
                                 </div>
                             </td>
                             <td>
@@ -49,14 +49,14 @@
                                 @elseif($paiement->statut == 'en attente')
                                     <span class="badge bg-warning text-dark rounded-pill px-3">En attente</span>
                                 @else
-                                    <span class="badge bg-danger rounded-pill px-3 text-capitalize">{{ $paiement->statut }}</span>
+                                    <span class="badge bg-success rounded-pill px-3 text-capitalize">{{ $paiement->statut }}</span>
                                 @endif
                             </td>
                             <td class="text-muted small">
                                 {{ $paiement->created_at->translatedFormat('d M Y à H:i') }}
                             </td>
                             <td class="text-end pe-4">
-                                <a href="#" class="btn btn-sm btn-light border-0 shadow-sm text-primary" title="Voir les détails">
+                                <a href="{{ route('admin.paiements.show', $paiement->id_paiement) }}" class="btn btn-sm btn-light border-0 shadow-sm text-primary" title="Voir les détails">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
                             </td>

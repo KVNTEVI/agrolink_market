@@ -4,9 +4,12 @@
 
 @section('content')
 <div class="container-fluid">
-    {{-- En-tête identique à la modération produit --}}
+    {{-- En-tête avec titre et paragraphe ajoutés --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0">Gestion des catégories</h4>
+        <div>
+            <h4 class="fw-bold mb-1">Gestion des catégories</h4>
+            <p class="text-muted small mb-0">Organisez et gérez les types de produits disponibles sur AgroLink Market</p>
+        </div>
         <div class="d-flex gap-3 align-items-center">
             <div class="badge bg-dark p-2 px-3">Total : {{ $categories->count() }}</div>
             <a href="{{ route('admin.categories.create') }}" class="btn btn-success shadow-sm rounded-3">

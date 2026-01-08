@@ -79,6 +79,8 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
     Route::get('/messages', [AcheteurConversationController::class, 'index'])->name('conversation.index');
     Route::get('/messages/{id}', [AcheteurConversationController::class, 'show'])->name('conversation.show');
     Route::get('/negociation/start/{produit}', [AcheteurConversationController::class, 'start'])->name('conversation.start');
+    Route::post('/conversation/{id}/finaliser', [AcheteurConversationController::class, 'finaliserCommande'])
+        ->name('conversation.finaliser');
 
     Route::get('/commandes', [CommandeController::class, 'index'])->name('commandes.index');
     Route::post('/commandes', [CommandeController::class, 'store'])->name('commandes.store');
@@ -142,7 +144,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
 
-    // --- SECTION NOTIFICATIONS (CORRIGÉE) ---
+    Route::get('paiements/{id}', [AdminPaiementController::class, 'show'])->name('paiements.show');
     // Le nom final sera automatiquement 'admin.notifications'
     Route::get('/notifications', function () { 
         return view('admin.notifications'); 

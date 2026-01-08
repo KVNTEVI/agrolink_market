@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Commande;
 use App\Models\Paiement;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Notifications\CommandePayeeNotification;
 use App\Models\Utilisateur;
 
@@ -72,41 +73,51 @@ class PaiementController extends Controller
      */
     public function payer($commandeId)
     {
-        // 1. Vérifie à nouveau l'existence et la propriété de la commande (sécurité).
+        // 1. Récupération avec sécurité renforcée
         $commande = Commande::where('id_commande', $commandeId)
             ->where('acheteur_id', Auth::id())
             ->firstOrFail();
 
-        // OPTIMISATION : Vous pourriez ajouter une vérification pour s'assurer que
-        // la commande n'est pas déjà 'payée' ou 'annulée' avant de procéder.
+        // 2. Vérification : Empêcher le double paiement
+        if ($commande->statut === 'payée') {
+            return redirect()->route('acheteur.commandes.index')
+                ->with('warning', 'Cette commande a déjà été réglée.');
+        }
 
-        // 2. Création de l'enregistrement de paiement (Simulation)
-        // Ceci enregistre la transaction de paiement dans la base de données.
+        // 3. Récupération du montant (Le montant_total doit être celui de la négociation)
+        $montantFinal = $commande->montant_total;
+
+        // 4. Création de l'enregistrement de paiement
         Paiement::create([
             'commande_id' => $commande->id_commande,
-            'montant' => $commande->montant_total,
-            'mode' => 'cash / mobile money', // Exemple de mode de paiement simulé
-            'statut' => 'payé' // Statut de la transaction de paiement
+            'montant'     => $montantFinal,
+            'mode'        => request('mode', 'Mobile Money'), // Valeur par défaut si vide
+            'statut'      => 'payée'
         ]);
 
-        // 3. Mise à jour du statut de la commande principale
-        // La commande passe du statut 'en_attente' (ou autre) à 'payée'.
+        // 5. Mise à jour de la commande
         $commande->update([
-            'statut' => 'payée'
+            'statut' => 'payée',
+            // On s'assure que la date de paiement est enregistrée si tu as une colonne dédiée
+            // 'paid_at' => now(), 
         ]);
 
-        // 🔔 NOTIFICATION DU PRODUCTEUR
+        // 6. Notification du producteur
+        // Important : On récupère l'ID du producteur directement depuis la commande
         $producteur = Utilisateur::find($commande->producteur_id);
+        
+        if($producteur) {
+            try {
+                $producteur->notify(new CommandePayeeNotification($commande));
+            } catch (\Exception $e) {
+                // Log l'erreur si la notification échoue mais ne bloque pas l'utilisateur
+                Log::error("Erreur notification : " . $e->getMessage());
+            }
+        }
 
-        $producteur->notify(
-            new CommandePayeeNotification($commande)
-        );
-
-
-        // 4. Redirection et message de succès
-        // Redirige l'utilisateur vers la liste de ses commandes.
+        // 7. Redirection
         return redirect()
             ->route('acheteur.commandes.index')
-            ->with('success', 'Paiement effectué avec succès');
+            ->with('success', "Le paiement de " . number_format($montantFinal, 0, ',', ' ') . " FCFA a été validé.");
     }
 }

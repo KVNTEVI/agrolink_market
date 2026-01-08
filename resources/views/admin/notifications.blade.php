@@ -18,7 +18,7 @@
         @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
         @if($unreadCount > 0)
             <div class="d-flex gap-2">
-                <form action="{{ route('notifications.readAll') }}" method="POST">
+                <form action="{{ route('admin.notifications.readAll') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
                         <i class="bi bi-check2-all me-1"></i> Marquer tout comme traité

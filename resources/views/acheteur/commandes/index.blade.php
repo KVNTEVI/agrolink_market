@@ -34,6 +34,7 @@
 @else
 
 {{-- TABLEAU --}}
+{{-- TABLEAU --}}
 <div class="card shadow-sm border-0">
     <div class="table-responsive">
         <table class="table align-middle mb-0">
@@ -44,7 +45,8 @@
                     <th>Quantité</th>
                     <th>Montant</th>
                     <th>Statut</th>
-                    <th class="text-end">Action</th>
+                    <th class="text-center">Détails</th> {{-- Nouvelle colonne --}}
+                    <th class="text-end">Paiement</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,48 +55,53 @@
                 @foreach($commande->items as $item)
                 <tr>
                     {{-- ID --}}
-                    <td class="fw-semibold">
+                    <td class="fw-semibold text-nowrap">
                         CMD-{{ $commande->id_commande }}
                     </td>
 
                     {{-- Produit --}}
-                    <td>
-                        {{ $item->produit->nom }}
-                    </td>
+                    <td>{{ $item->produit->nom }}</td>
 
                     {{-- Quantité --}}
-                    <td>
-                        {{ $item->quantite }}
-                    </td>
+                    <td>{{ $item->quantite }}</td>
 
                     {{-- Montant --}}
-                    <td>
+                    <td class="text-nowrap">
                         {{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA
                     </td>
 
                     {{-- Statut --}}
                     <td>
                         @if($commande->statut === 'payée')
-                            <span class="badge bg-success">
-                                <i class="bi bi-check-circle"></i> Payée
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">
+                                <i class="bi bi-check-circle me-1"></i> Payée
                             </span>
                         @else
-                            <span class="badge bg-warning text-dark">
-                                <i class="bi bi-hourglass-split"></i> En attente
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3">
+                                <i class="bi bi-hourglass-split me-1"></i> En attente
                             </span>
                         @endif
                     </td>
 
-                    {{-- Action --}}
+                    {{-- Détails --}}
+                    <td class="text-center">
+                        <a href="{{ route('acheteur.commandes.show', $commande->id_commande) }}" 
+                           class="btn btn-sm btn-light rounded-circle shadow-sm" 
+                           title="Voir les détails">
+                            <i class="bi bi-eye text-primary"></i>
+                        </a>
+                    </td>
+
+                    {{-- Action Paiement --}}
                     <td class="text-end">
                         @if($commande->statut !== 'payée')
                             <a href="{{ route('acheteur.paiement.show', $commande->id_commande) }}"
-                               class="btn btn-sm btn-outline-success">
-                                <i class="bi bi-credit-card"></i> Payer
+                               class="btn btn-sm btn-success px-3">
+                                <i class="bi bi-credit-card me-1"></i> Payer
                             </a>
                         @else
-                            <span class="text-muted">
-                                <i class="bi bi-lock-fill"></i>
+                            <span class="badge bg-light text-muted border px-3">
+                                <i class="bi bi-shield-check me-1"></i> Terminé
                             </span>
                         @endif
                     </td>
@@ -106,7 +113,6 @@
         </table>
     </div>
 </div>
-
 @endif
 
 @endsection

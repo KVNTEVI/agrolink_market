@@ -20,9 +20,10 @@ class ProducteurController extends Controller
     public function dashboard()
     {
         $userId = Auth::id(); 
+        
 
         $chiffreAffaires = Commande::where('producteur_id', $userId)
-            ->where('statut', 'payé')
+            ->whereIn('statut', ['payée', 'payé', 'payee','expédiée', 'livrée'])
             ->sum('montant_total');
 
         $commandesEnAttente = Commande::where('producteur_id', $userId)

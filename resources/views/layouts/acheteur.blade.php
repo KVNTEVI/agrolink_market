@@ -88,68 +88,107 @@
             transition: all 0.3s ease;
             transform: translateX(-50%);
         }
+
+        /* --- RESPONSIVITÉ --- */
+
+/* Le voile noir qui couvre l'écran sur mobile quand le menu est ouvert */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1040;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        position: fixed;
+        left: -260px; /* On cache la sidebar à gauche */
+        top: 0;
+        height: 100vh;
+        z-index: 1050;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    }
+
+    /* Quand on ajoute la classe .show en JS, la sidebar glisse vers la droite */
+    .sidebar.show {
+        left: 0;
+    }
+
+    /* On affiche le voile noir */
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    /* Ajustement de la navbar pour le bouton mobile */
+    .mobile-nav-toggle {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+    }
+}
+
+@media (min-width: 992px) {
+    .mobile-nav-toggle {
+        display: none; /* Cache le bouton menu sur ordinateur */
+    }
+}
     </style>
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="wrapper">
 
-    <aside class="sidebar">
-        <div class="p-3 border-bottom text-center text-success fw-bold fs-5">
-            <i class="bi bi-leaf-fill"></i> AgroLink Ach
+    <aside class="sidebar" id="sidebar">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <span class="text-success fw-bold fs-5 mx-auto">
+                <i class="bi bi-basket2-fill"></i> Acheteur
+            </span>
+            <button class="btn d-lg-none" onclick="toggleSidebar()">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
         
         <nav class="mt-3">
             <ul class="nav flex-column">
-                {{-- Tableau de bord --}}
                 <li class="nav-item">
                     <a href="{{ route('acheteur.dashboard') }}" class="nav-link {{ request()->routeIs('acheteur.dashboard') ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i> Tableau de bord
                     </a>
                 </li>
-
-                {{-- Mes Commandes (NOUVEAU) --}}
                 <li class="nav-item">
                     <a href="{{ route('acheteur.commandes.index') }}" class="nav-link {{ request()->routeIs('acheteur.commandes.*') ? 'active' : '' }}">
                         <i class="bi bi-cart-check"></i> Mes commandes
                     </a>
                 </li>
-                
-                {{-- Historique Paiements --}}
                 <li class="nav-item">
                     <a href="{{ route('acheteur.paiements.index') }}" class="nav-link {{ request()->routeIs('acheteur.paiements.index') ? 'active' : '' }}">
                         <i class="bi bi-clock-history"></i> Historique paiements
                     </a>
                 </li>
-
-                {{-- Messages --}}
                 <li class="nav-item">
                     <a href="{{ route('acheteur.conversation.index') }}" class="nav-link {{ request()->routeIs('acheteur.messages.index') ? 'active' : '' }}">
                         <i class="bi bi-chat-dots"></i> Messages
                     </a>
                 </li>
-
-                {{-- Notifications --}}
                 <li class="nav-item">
-                <a href="{{ route('acheteur.notifications.index') }}" class="nav-link {{ request()->routeIs('acheteur.notifications.index') ? 'active' : '' }} d-flex justify-content-between align-items-center">
-                        <div>
-                            <i class="bi bi-bell"></i> Notifications
-                        </div>
+                    <a href="{{ route('acheteur.notifications.index') }}" class="nav-link {{ request()->routeIs('acheteur.notifications.index') ? 'active' : '' }} d-flex justify-content-between align-items-center">
+                        <div><i class="bi bi-bell"></i> Notifications</div>
                         @if(auth()->user()->unreadNotifications->count())
-                            <span class="badge bg-danger rounded-pill">
-                                {{ auth()->user()->unreadNotifications->count() }}
-                            </span>
+                            <span class="badge bg-danger rounded-pill">{{ auth()->user()->unreadNotifications->count() }}</span>
                         @endif
                     </a>
                 </li>
-
-                {{-- Mon profil --}}
                 <li class="nav-item">
                     <a href="{{ route('acheteur.profil') }}" class="nav-link {{ request()->routeIs('acheteur.profil') ? 'active' : '' }}">
                         <i class="bi bi-person-circle"></i> Mon profil
                     </a>
                 </li>
-
                 <li class="mt-4 px-3">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -163,9 +202,16 @@
     </aside>
 
     <main class="main-content">
+        <div class="mobile-nav-toggle d-lg-none">
+            <button class="btn btn-success" onclick="toggleSidebar()">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <span class="ms-3 fw-bold text-success">Menu tableau de bord</span>
+        </div>
+
         @include('partials.navbar')
 
-        <div class="p-4">
+        <div class="p-3 p-md-4">
             @if(session('success'))
                 <div class="alert alert-success border-0 shadow-sm">
                     <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
@@ -179,7 +225,17 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-{{-- Ton script de notifications est conservé ici --}}
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+        document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+
+    // Fermer si on clique sur le voile noir
+    document.getElementById('sidebarOverlay').onclick = function() {
+        toggleSidebar();
+    };
+</script>
 
 </body>
 </html>

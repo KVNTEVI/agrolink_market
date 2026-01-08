@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Producteur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
-use App\Models\Commande;
-use App\Models\CommandeItem; // Ton modèle est maintenant bien utilisé
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; 
 use App\Notifications\NouvelleNegociationNotification;
 
 class ConversationController extends Controller
@@ -39,16 +36,22 @@ class ConversationController extends Controller
             ->with(['messages.expediteur', 'produit', 'acheteur'])
             ->findOrFail($id);
 
+        // --- MARQUAGE AUTOMATIQUE COMME LU ---
+        Auth::user()->unreadNotifications
+            ->where('data.conversation_id', $id)
+            ->markAsRead();
+        // -------------------------------------
+
         return view('producteur.conversations.show', compact('conversation'));
     }
 
     /**
-     * Accepter l'offre : Crée une Commande ET un CommandeItem
+     * Valider le prix proposé : Fixe le prix et attend le choix de la quantité par l'acheteur
      */
     public function accepterOffre($conversationId)
     {
         $conversation = Conversation::where('producteur_id', Auth::id())
-            ->with('acheteur')
+            ->with(['acheteur', 'produit']) // Ajout du produit pour retrouver la commande
             ->findOrFail($conversationId);
 
         // Récupération du prix proposé dans le dernier message
@@ -61,45 +64,49 @@ class ConversationController extends Controller
             return back()->with('error', 'Aucune proposition de prix valide trouvée.');
         }
 
-        try {
-            DB::transaction(function () use ($conversation, $dernierPrix) {
-                
-                // 1. Mise à jour du statut de la négociation
-                $conversation->update([
-                    'statut' => 'accord_trouve',
-                    'prix_final' => $dernierPrix
-                ]);
+        // --- TON CODE EXISTANT (Conservé) ---
+        $conversation->update([
+            'statut' => 'prix_accepte',
+            'prix_final' => $dernierPrix
+        ]);
 
-                // 2. Création de la Commande (En-tête)
-                $commande = Commande::create([
-                    'acheteur_id'   => $conversation->acheteur_id,
-                    'producteur_id' => $conversation->producteur_id,
-                    'montant_total' => $dernierPrix,
-                    'statut'        => 'en_attente'
-                ]);
+        // --- AJOUT : SYNCHRONISATION AVEC LA COMMANDE ---
+        // On cherche la commande "en attente" pour cet acheteur et ce produit
+        // Note : On utilise first() car il peut n'y en avoir qu'une en cours
+        $commande = \App\Models\Commande::where('acheteur_id', $conversation->acheteur_id)
+            ->where('statut', 'en_attente')
+            ->whereHas('items', function($query) use ($conversation) {
+                $query->where('produit_id', $conversation->produit_id);
+            })
+            ->first();
 
-                // 3. UTILISATION DE TON MODÈLE CommandeItem (Le détail)
-                // On crée explicitement l'item lié à la commande
-                CommandeItem::create([
-                    'commande_id' => $commande->id_commande, // Récupère l'ID de la commande créée
-                    'produit_id'  => $conversation->produit_id,
-                    'quantite'    => 1, 
-                    'prix_final'  => $dernierPrix
-                ]);
+        if ($commande) {
+            // On récupère la quantité pour calculer le nouveau montant total
+            // Si c'est un forfait global (ex: les 320 000 pour tout le lot), 
+            // on met directement le prix final.
+            $item = $commande->items()->where('produit_id', $conversation->produit_id)->first();
+            $nouveauTotal = $dernierPrix * ($item ? $item->quantite : 1);
 
-                // 4. Notification de l'acheteur
-                if ($conversation->acheteur) {
-                    $conversation->acheteur->notify(
-                        new NouvelleNegociationNotification($conversation, 'accepte')
-                    );
-                }
-            });
+            $commande->update([
+                'montant_total' => $nouveauTotal,
+                'producteur_id' => Auth::id() // On sécurise le lien avec le producteur
+            ]);
 
-            return back()->with('success', 'Offre acceptée ! La commande et son détail ont été créés.');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Erreur lors de la validation : ' . $e->getMessage());
+            // Optionnel : Mettre à jour le prix_final dans la table pivot (items)
+            if ($item) {
+                $item->update(['prix_final' => $dernierPrix]);
+            }
         }
+        // ----------------------------------------------
+
+        // Notification de l'acheteur
+        if ($conversation->acheteur) {
+            $conversation->acheteur->notify(
+                new NouvelleNegociationNotification($conversation, 'accepte')
+            );
+        }
+
+        return back()->with('success', 'Prix validé ! Le montant de la commande a été mis à jour.');
     }
 
     /**

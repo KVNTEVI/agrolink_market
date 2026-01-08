@@ -15,7 +15,7 @@
     }
 
     .login-header {
-        background-color: #27ae60;
+        background-color: #198754;
         color: white;
         text-align: center;
         padding: 1.5rem;
@@ -28,7 +28,7 @@
     }
 
     .btn-login {
-        background-color: #27ae60;
+        background-color: #198754;
         border: none;
         padding: 10px;
         font-weight: 600;
@@ -36,12 +36,12 @@
     }
 
     .btn-login:hover {
-        background-color: #219150;
+        background-color: #198754;
         transform: translateY(-1px);
     }
 
     .forgot-link {
-        color: #27ae60;
+        color: #198754;
         text-decoration: none;
         font-size: 0.9rem;
     }
@@ -81,7 +81,7 @@
                         <label for="password" class="form-label">Mot de passe</label>
                         <input id="password" type="password"
                                class="form-control @error('password') is-invalid @enderror"
-                               name="password" placeholder="••••••••" required>
+                               name="password" placeholder="Saisir ton mot de passe" required>
 
                         @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -109,12 +109,15 @@
                         </button>
                     </div>
                 </form>
+                <div class="text-center mt-4">
+                    <p class="mb-0 text-muted">Vous n'avez pas de compte ? 
+                        <a href="{{ route('register') }}" class="fw-bold" style="color: #198754; text-decoration: none;">
+                            Inscrivez-vous ici
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
-
-        <p class="text-center text-muted mt-4">
-            <small>© {{ date('Y') }} <strong>AgroLink Market</strong>. Tous droits réservés.</small>
-        </p>
     </div>
 </div>
 

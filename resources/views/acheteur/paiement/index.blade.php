@@ -27,6 +27,7 @@
                             <th>Mode de Paiement</th>
                             <th>Montant</th>
                             <th>Statut</th>
+                            <th class="text-center">Détails</th>
                             <th class="text-end pe-4">Action</th>
                         </tr>
                     </thead>
@@ -47,10 +48,20 @@
                             </td>
                             <td><span class="fw-bold text-dark">{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</span></td>
                             <td>
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3">
-                                    {{ ucfirst($paiement->statut) }}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">
+                                    <i class="bi bi-check-circle me-1"></i>{{ ucfirst($paiement->statut) }}
                                 </span>
                             </td>
+                            
+                            {{-- Cellule Détails --}}
+                            <td class="text-center">
+                                <a href="{{ route('acheteur.commandes.show', $paiement->commande_id) }}" 
+                                   class="btn btn-sm btn-light rounded-circle shadow-sm" 
+                                   title="Voir la commande">
+                                    <i class="bi bi-eye text-primary"></i>
+                                </a>
+                            </td>
+
                             <td class="text-end pe-4">
                                 <a href="#" class="btn btn-sm btn-outline-dark rounded-pill px-3">
                                     <i class="bi bi-printer me-1"></i> Reçu
@@ -59,7 +70,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
+                            <td colspan="7" class="text-center py-5 text-muted"> {{-- Colspan passé à 7 --}}
                                 <i class="bi bi-credit-card-2-back fs-1 d-block mb-2"></i>
                                 Aucun paiement enregistré pour le moment.
                             </td>

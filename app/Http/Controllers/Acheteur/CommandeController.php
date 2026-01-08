@@ -34,6 +34,7 @@ class CommandeController extends Controller
         $commandes = Commande::where('acheteur_id', Auth::id())
             // Optimisation (Eager Loading) : charge les éléments de commande et les produits associés.
             ->with('items.produit')
+            ->latest()
             ->get();
 
         // Passe la collection de commandes à la vue.

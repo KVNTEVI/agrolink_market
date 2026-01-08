@@ -17,9 +17,17 @@ class PaiementController extends Controller
     public function index()
     {
         // Récupère toutes les transactions de paiement.
-        $paiements = Paiement::all();
+        $paiements = Paiement::latest()->get();
         
         // Affiche la vue 'admin.paiements.index' avec la liste des paiements.
         return view('admin.paiements.index', compact('paiements'));
+    }
+
+    public function show($id)
+    {
+        // On charge le paiement avec la commande et l'acheteur pour avoir tous les détails
+        $paiement = Paiement::with(['commande.acheteur', 'commande.items.produit'])->findOrFail($id);
+        
+        return view('admin.paiements.show', compact('paiement'));
     }
 }

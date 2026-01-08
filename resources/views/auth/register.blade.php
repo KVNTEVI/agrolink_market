@@ -73,7 +73,7 @@
                         <div class="col-md-12 mb-3">
                             <label for="nom" class="form-label">{{ __('Nom complet') }}</label>
                             <input id="nom" type="text" class="form-control @error('nom') is-invalid @enderror" 
-                                   name="nom" value="{{ old('nom') }}" placeholder="Ex: Jean Dupont" 
+                                   name="nom" value="{{ old('nom') }}" placeholder="Ex: KOFFI Kouma" 
                                    required autocomplete="nom" autofocus>
                             
                             @error('nom')
@@ -86,7 +86,7 @@
                         <div class="col-md-12 mb-3">
                             <label for="email" class="form-label">{{ __('Adresse Email') }}</label>
                             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   name="email" value="{{ old('email') }}" placeholder="jean@exemple.com" 
+                                   name="email" value="{{ old('email') }}" placeholder="kouma@exemple.com" 
                                    required autocomplete="email">
 
                             @error('email')
@@ -110,7 +110,7 @@
                                 <div class="flex-fill">
                                     <input type="radio" class="btn-check" name="role_id" id="role_producteur" value="3">
                                     <label class="btn btn-outline-success w-100 py-3 shadow-sm" for="role_producteur">
-                                        <i class="bi bi-truck d-block mb-1 fs-3"></i>
+                                        <i class="bi bi-shop d-block mb-1 fs-3"></i>
                                         <span class="fw-bold">Producteur</span>
                                         <small class="d-block text-muted" style="font-size: 0.7rem;">Je veux vendre</small>
                                     </label>

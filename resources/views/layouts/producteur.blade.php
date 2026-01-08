@@ -92,7 +92,7 @@
 
         <aside class="sidebar">
             <div class="p-3 border-bottom text-center text-success fw-bold fs-5">
-                <i class="bi bi-leaf-fill"></i> AgroLink Pro
+                <i class="bi bi-shop"></i> Producteur
             </div>
             
             <nav class="mt-3">

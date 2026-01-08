@@ -65,15 +65,17 @@
                             {{-- Statut avec badges colorés --}}
                             <td>
                                 @php
+                                    // Définition des couleurs demandées
                                     $statusClass = [
-                                        'en attente' => 'bg-warning text-warning',
-                                        'payée'      => 'bg-info text-info',
-                                        'expédiée'   => 'bg-primary text-primary',
-                                        'livrée'     => 'bg-success text-success',
-                                        'annulée'    => 'bg-danger text-danger',
-                                    ][$commande->statut] ?? 'bg-secondary text-secondary';
+                                        'en attente' => 'bg-warning text-dark border-warning',
+                                        'payée'      => 'bg-success text-success border-success',  // Vert pour payé
+                                        'expédiée'   => 'bg-primary text-primary border-primary',  // Bleu pour expédié
+                                        'livrée'     => 'bg-success text-success border-success',  // Vert pour livré
+                                        'annulée'    => 'bg-danger text-danger border-danger',    // Rouge pour annulé
+                                    ][$commande->statut] ?? 'bg-secondary text-secondary border-secondary';
                                 @endphp
-                                <span class="badge {{ $statusClass }} bg-opacity-10 border rounded-pill px-3 py-2 text-capitalize">
+                                
+                                <span class="badge {{ $statusClass }} bg-opacity-10 border rounded-pill px-3 py-2 text-capitalize" style="min-width: 100px;">
                                     {{ $commande->statut }}
                                 </span>
                             </td>
