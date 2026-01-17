@@ -36,6 +36,15 @@
                         <label class="form-label fw-bold small">Description</label>
                         <textarea name="description" class="form-control bg-light border-0" rows="4" placeholder="Décrivez la qualité, l'origine..."></textarea>
                     </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold small">Catégorie du produit</label>
+                        <select name="categorie_id" class="form-select bg-light border-0 py-2" required>
+                            <option value="" selected disabled>Choisir une catégorie...</option>
+                            @foreach($categories as $categorie)
+                                <option value="{{ $categorie->id_categorie }}">{{ $categorie->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     {{-- Nouveau champ pour l'image directe --}}
                     <div class="col-12">

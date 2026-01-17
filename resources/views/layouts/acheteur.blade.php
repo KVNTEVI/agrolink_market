@@ -4,138 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Espace Acheteur') - AgroLink Market</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
+    
     <style>
         .wrapper { display: flex; min-height: 100vh; }
         
-        .sidebar {
-            width: 260px; /* Identique au producteur */
-            background-color: #ffffff;
-            border-right: 1px solid #e5e7eb;
-            transition: all 0.3s;
+        /* Sidebar - Strictement identique à ton Admin */
+        .sidebar { 
+            width: 260px; 
+            background: #ffffff; 
+            border-right: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.02);
+            z-index: 1050;
+            transition: all 0.3s ease;
         }
 
-        .sidebar .nav-link {
-            padding: 12px 20px;
-            color: #4b5563;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            border-radius: 8px; /* Ajouté pour correspondre au producteur */
-            margin: 2px 15px;  /* Ajouté pour correspondre au producteur */
-        }
-
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: #f0fdf4;
-            color: #198754;
-        }
-
-        /* Aligne parfaitement les icônes */
-        .sidebar .nav-link i {
-            font-size: 1.2rem;
-            margin-right: 12px;
-            width: 24px; /* Fixe la largeur pour que le texte soit aligné */
-            display: inline-block;
-            text-align: center;
-        }
-
-        .main-content {
-            flex: 1;
-            background-color: #f9fafb;
-        }
-
-        .hover-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
-        }
-
-        /* Couleur de base et forçage du survol en vert */
-        .navbar-nav .nav-link {
-            color: #4b5563 !important; /* Gris foncé de base */
-            transition: color 0.3s ease !important;
-        }
-
-        /* Force le vert au passage de la souris */
-        .navbar-nav .nav-link:hover {
-            color: #198754 !important; /* Vert Succès */
-        }
-
-        /* Force le vert si le lien est actif */
-        .navbar-nav .nav-link.active {
-            color: #198754 !important;
-            font-weight: 600;
-        }
-
-        /* Animation optionnelle : petit trait vert sous le lien au survol */
-        .navbar-nav .nav-link {
-            position: relative;
+        .sidebar .nav-link { 
+            padding: 12px 20px; 
+            color: black; 
+            display: flex; 
+            align-items: center; 
+            border-radius: 10px; 
+            margin: 4px 15px;
+            transition: all 0.3s ease;
             font-weight: 500;
         }
-        .navbar-nav .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
-            background-color: #198754;
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
+
+        .sidebar .nav-link:hover, 
+        .sidebar .nav-link.active { 
+            background-color: #f0fdf4; 
+            color: #198754; 
+            transform: translateX(5px);
         }
 
-        /* --- RESPONSIVITÉ --- */
+        .sidebar .nav-link i { font-size: 1.2rem; margin-right: 12px; }
 
-/* Le voile noir qui couvre l'écran sur mobile quand le menu est ouvert */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1040;
-}
+        /* Contenu principal - Fond vert 10% comme l'Admin */
+        .main-content { 
+            flex: 1; 
+            background-color: rgba(25, 135, 84, 0.1); 
+            margin-left: 260px;
+            min-height: 100vh;
+        }
 
-@media (max-width: 991.98px) {
-    .sidebar {
-        position: fixed;
-        left: -260px; /* On cache la sidebar à gauche */
-        top: 0;
-        height: 100vh;
-        z-index: 1050;
-        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-    }
+        /* Bouton retour style Admin */
+        .btn-outline-success {
+            border-radius: 5px;
+            font-weight: 600;
+            border-width: 1.5px;
+        }
 
-    /* Quand on ajoute la classe .show en JS, la sidebar glisse vers la droite */
-    .sidebar.show {
-        left: 0;
-    }
+        /* Bloc profil en bas style Admin */
+        .user-profile-card {
+            background-color: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
 
-    /* On affiche le voile noir */
-    .sidebar-overlay.show {
-        display: block;
-    }
+        /* Overlay mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+        }
 
-    /* Ajustement de la navbar pour le bouton mobile */
-    .mobile-nav-toggle {
-        display: flex;
-        align-items: center;
-        padding: 10px 15px;
-        background: #fff;
-        border-bottom: 1px solid #e5e7eb;
-    }
-}
-
-@media (min-width: 992px) {
-    .mobile-nav-toggle {
-        display: none; /* Cache le bouton menu sur ordinateur */
-    }
-}
+        @media (max-width: 991.98px) {
+            .sidebar { left: -260px; }
+            .sidebar.show { left: 0; }
+            .sidebar-overlay.show { display: block; }
+            .main-content { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
@@ -143,22 +92,21 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="wrapper">
-
-    <aside class="sidebar" id="sidebar">
-        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-            <span class="text-success fw-bold fs-5 mx-auto">
+    <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="p-4 border-bottom text-center">
+            <div class="text-success fw-bold fs-5 mb-3" style="letter-spacing: 1px;">
                 <i class="bi bi-basket2-fill"></i> Acheteur
-            </span>
-            <button class="btn d-lg-none" onclick="toggleSidebar()">
-                <i class="bi bi-x-lg"></i>
-            </button>
+            </div>
+            <a href="{{ url('/') }}" class="btn btn-outline-success btn-sm w-100 shadow-sm">
+                <i class="bi bi-arrow-left-circle me-1"></i> Vers le site
+            </a>
         </div>
-        
-        <nav class="mt-3">
+
+        <nav class="mt-3 flex-grow-1">
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a href="{{ route('acheteur.dashboard') }}" class="nav-link {{ request()->routeIs('acheteur.dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2"></i> Tableau de bord
+                        <i class="bi bi-grid-1x2"></i> Tableau de bord
                     </a>
                 </li>
                 <li class="nav-item">
@@ -168,7 +116,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('acheteur.paiements.index') }}" class="nav-link {{ request()->routeIs('acheteur.paiements.index') ? 'active' : '' }}">
-                        <i class="bi bi-clock-history"></i> Historique paiements
+                        <i class="bi bi-wallet2"></i> Paiements
                     </a>
                 </li>
                 <li class="nav-item">
@@ -189,53 +137,59 @@
                         <i class="bi bi-person-circle"></i> Mon profil
                     </a>
                 </li>
-                <li class="mt-4 px-3">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="btn btn-outline-danger w-100 btn-sm d-flex align-items-center justify-content-center py-2">
-                            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
-                        </button>
-                    </form>
-                </li>
             </ul>
         </nav>
+
+        <div class="p-3 border-top bg-light bg-opacity-50">
+            <div class="user-profile-card d-flex align-items-center">
+                <img src="https://ui-avatars.com/api/?name={{ Auth::user()->nom }}&background=198754&color=fff"
+                    alt="avatar" width="38" height="38" class="rounded-circle me-2 shadow-sm">
+                
+                <div class="overflow-hidden">
+                    <div class="fw-bold text-dark text-truncate small">{{ Auth::user()->nom }}</div>
+                    <div class="text-muted text-truncate" style="font-size: 0.7rem;">{{ auth()->user()->email }}</div>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="btn btn-sm btn-outline-danger w-100 py-2 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-power me-2"></i> Déconnexion
+                </button>
+            </form>
+        </div>
     </aside>
 
     <main class="main-content">
-        <div class="mobile-nav-toggle d-lg-none">
-            <button class="btn btn-success" onclick="toggleSidebar()">
+        <div class="d-lg-none p-3 bg-white border-bottom d-flex align-items-center">
+            <button class="btn btn-success me-3" onclick="toggleSidebar()">
                 <i class="bi bi-list fs-4"></i>
             </button>
-            <span class="ms-3 fw-bold text-success">Menu tableau de bord</span>
+            <span class="fw-bold text-success">Espace Acheteur</span>
         </div>
 
-        @include('partials.navbar')
-
-        <div class="p-3 p-md-4">
+        <div class="p-4">
             @if(session('success'))
-                <div class="alert alert-success border-0 shadow-sm">
-                    <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
+                <div class="alert alert-success border-0 shadow-sm d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    {{ session('success') }}
                 </div>
             @endif
+            
             @yield('content')
         </div>
     </main>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
         document.getElementById('sidebarOverlay').classList.toggle('show');
     }
-
-    // Fermer si on clique sur le voile noir
     document.getElementById('sidebarOverlay').onclick = function() {
         toggleSidebar();
     };
 </script>
-
 </body>
 </html>

@@ -35,7 +35,7 @@ class CommandeController extends Controller
             // Optimisation (Eager Loading) : charge les éléments de commande et les produits associés.
             ->with('items.produit')
             ->latest()
-            ->get();
+            ->paginate(10);
 
         // Passe la collection de commandes à la vue.
         return view('acheteur.commandes.index', compact('commandes'));

@@ -2,26 +2,29 @@
 @section('title', 'Tableau de Bord')
 
 @section('content')
-<div class="container-fluid py-4">
+{{-- Fond de page plus sombre pour faire ressortir les cartes --}}
+<div class="container-fluid py-4 min-vh-100">
+    
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1">Vue d'ensemble</h4>
+            <h4 class="fw-bold mb-1 text-success">Vue d'ensemble</h4>
             <p class="text-muted small mb-0">Statistiques globales de la plateforme AgroLink Market</p>
         </div>
-        <div class="text-muted small">
-            <i class="bi bi-calendar3 me-2"></i>{{ now()->translatedFormat('d F Y') }}
+        <div class="text-muted small bg-white px-3 py-2 rounded shadow-sm border">
+            <i class="bi bi-calendar3 me-2 text-primary"></i>{{ now()->translatedFormat('d F Y') }}
         </div>
     </div>
 
+    {{-- Cartes de statistiques --}}
     <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 p-2">
+            <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-people text-primary fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block">Utilisateurs</small>
+                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Utilisateurs</small>
                         <h4 class="mb-0 fw-bold">{{ $totalUtilisateurs }}</h4>
                     </div>
                 </div>
@@ -29,13 +32,13 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 p-2">
+            <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-success bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-box-seam text-success fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block">Produits</small>
+                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Produits</small>
                         <h4 class="mb-0 fw-bold">{{ $totalProduits }}</h4>
                     </div>
                 </div>
@@ -43,13 +46,13 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 p-2">
+            <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-warning bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-tags text-warning fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block">Catégories</small>
+                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Catégories</small>
                         <h4 class="mb-0 fw-bold">{{ $totalCategories }}</h4>
                     </div>
                 </div>
@@ -57,13 +60,13 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 p-2">
+            <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-info bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-credit-card text-info fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block">Paiements</small>
+                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Paiements</small>
                         <h4 class="mb-0 fw-bold text-nowrap">{{ number_format($totalPaiements, 0, ',', ' ') }}</h4>
                     </div>
                 </div>
@@ -71,61 +74,68 @@
         </div>
     </div>
 
+    {{-- Tableau des inscriptions récentes --}}
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
-            <h5 class="mb-0 fw-bold"><i class="bi bi-person-plus me-2 text-primary"></i>Inscriptions récentes</h5>
-            <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-sm btn-light rounded-pill px-3">Voir tout</a>
+            <h5 class="mb-0 fw-bold"><i class="bi bi-person-plus me-2 text-dark"></i>Inscriptions récentes</h5>
+            <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-sm btn-dark rounded-pill px-4 shadow-sm" style="font-size: 0.8rem;">
+                Voir tout
+            </a>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr class="text-secondary small text-uppercase">
-                            <th class="ps-4">Utilisateur</th>
-                            <th>Rôle</th>
-                            <th>Statut</th>
-                            <th>Inscription</th>
-                            <th class="text-end pe-4">Action rapide</th>
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-4 py-3 border-0">Utilisateur</th>
+                            <th class="border-0">Rôle</th>
+                            <th class="border-0">Statut</th>
+                            <th class="border-0">Inscription</th>
+                            <th class="text-end pe-4 border-0">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white">
                         @forelse($utilisateursRecents as $u)
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
-                                        <span class="small fw-bold text-secondary">{{ strtoupper(substr($u->nom, 0, 1)) }}</span>
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3 border shadow-sm" style="width: 38px; height: 38px;">
+                                        <span class="small fw-bold text-dark">{{ strtoupper(substr($u->nom, 0, 1)) }}</span>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <span class="fw-bold small">{{ $u->nom }} {{ $u->prenom }}</span>
+                                        <span class="fw-bold text-dark small">{{ $u->nom }} {{ $u->prenom }}</span>
                                         <span class="text-muted" style="font-size: 0.75rem;">{{ $u->email }}</span>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border rounded-pill px-3 fw-normal" style="font-size: 0.7rem;">
+                                <span class="badge bg-light text-dark border rounded-pill px-3 fw-normal" style="font-size: 0.7rem; font-weight: 600;">
                                     {{ $u->role->nom_role ?? 'Client' }}
                                 </span>
                             </td>
                             <td>
                                 @if($u->statut)
-                                    <span class="badge bg-success rounded-pill px-3" style="font-size: 0.7rem;">Actif</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3" style="font-size: 0.7rem;">Actif</span>
                                 @else
-                                    <span class="badge bg-danger rounded-pill px-3" style="font-size: 0.7rem;">Bloqué</span>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3" style="font-size: 0.7rem;">Bloqué</span>
                                 @endif
                             </td>
                             <td class="text-muted small">
-                                {{ $u->created_at->diffForHumans() }}
+                                <div class="fw-medium text-dark">{{ $u->created_at->format('d M Y') }}</div>
+                                <div class="opacity-75" style="font-size: 0.7rem;">{{ $u->created_at->diffForHumans() }}</div>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-sm btn-light text-primary border-0">
+                                <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-sm btn-light text-dark border-0 shadow-sm rounded-3">
                                     <i class="bi bi-arrow-right"></i>
                                 </a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted small">Aucun utilisateur récent</td>
+                            <td colspan="5" class="text-center py-5 text-muted bg-white">
+                                <i class="bi bi-people fs-1 d-block mb-2 opacity-25"></i>
+                                Aucun utilisateur récent
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -134,4 +144,38 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Global Background */
+    body { background-color: #f0f2f5; }
+
+    /* Style identique à vos autres pages Admin */
+    .table thead.table-dark tr {
+        background-color: #1a1d20 !important;
+    }
+    
+    .table thead th {
+        color: #ffffff !important;
+        border: none !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.8px;
+    }
+
+    /* Effet au survol des lignes */
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa !important;
+    }
+
+    /* Harmonisation des cartes statistiques */
+    .card.shadow-sm {
+        transition: transform 0.2s ease;
+    }
+    .card.shadow-sm:hover {
+        transform: translateY(-3px);
+    }
+</style>
 @endsection

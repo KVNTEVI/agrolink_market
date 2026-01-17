@@ -17,7 +17,7 @@ class ProduitController extends Controller
     public function index()
     {
         // Récupère tous les produits de la base de données.
-        $produits = Produit::all();
+        $produits = Produit::latest()->paginate(10);
         // Affiche la vue 'admin.produits.index'.
         return view('admin.produits.index', compact('produits'));
     }
@@ -26,7 +26,7 @@ class ProduitController extends Controller
     public function approve($id)
     {
         // Trouve le produit par son ID.
-        $produit = Produit::findOrFail($id);
+        $produit = Produit::where('id_produit', $id)->firstOrFail();
         
         // Met à jour le statut du produit.
         $produit->statut = 'valide';
@@ -40,7 +40,7 @@ class ProduitController extends Controller
     public function reject($id)
     {
         // Trouve le produit par son ID.
-        $produit = Produit::findOrFail($id);
+        $produit = Produit::where('id_produit', $id)->firstOrFail();
         
         // Met à jour le statut du produit.
         $produit->statut = 'refuse';
@@ -54,7 +54,8 @@ class ProduitController extends Controller
     public function destroy($id)
     {
         // Supprime le produit correspondant à l'ID.
-        Produit::destroy($id);
+       $produit = Produit::where('id_produit', $id)->firstOrFail();
+       $produit->delete();
         
         // Redirige avec un message de succès.
         return redirect()->back()->with('success', 'Produit supprimé.');

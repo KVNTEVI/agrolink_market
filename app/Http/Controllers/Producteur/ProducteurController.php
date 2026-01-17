@@ -8,6 +8,7 @@ use App\Models\Commande;
 use App\Models\Produit;  
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rules\Password;
 
 class ProducteurController extends Controller
@@ -65,6 +66,7 @@ class ProducteurController extends Controller
     }
 
     // NOUVELLE MÉTHODE : Mise à jour du profil
+   // NOUVELLE MÉTHODE : Mise à jour du profil
     public function updateProfil(Request $request)
     {
         $user = Auth::user();
@@ -76,6 +78,7 @@ class ProducteurController extends Controller
             'telephone' => 'nullable|string|max:20',
             'adresse' => 'nullable|string|max:500',
             'password' => ['nullable', 'confirmed', Password::min(8)],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         // 2. Mise à jour des informations de base
@@ -83,6 +86,27 @@ class ProducteurController extends Controller
         $user->email = $request->email;
         $user->telephone = $request->telephone;
         $user->adresse = $request->adresse;
+
+        // --- AJOUT : LOGIQUE DE MODIFICATION DE L'IMAGE ---
+        if ($request->hasFile('image')) {
+            $destinationPath = public_path('images/utilisateurs');
+
+            // Supprimer l'ancienne image si elle existe
+            if ($user->image) {
+                $oldFile = $destinationPath . '/' . $user->image;
+                if (File::exists($oldFile)) {
+                    File::delete($oldFile);
+                }
+            }
+
+            // Enregistrer la nouvelle image
+            $file = $request->file('image');
+            $fileName = time() . '_' . $user->id_utilisateur . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $fileName);
+            
+            $user->image = $fileName;
+        }
+        // --------------------------------------------------
 
         // 3. Mise à jour du mot de passe (uniquement si rempli)
         if ($request->filled('password')) {

@@ -17,7 +17,7 @@ class PaiementController extends Controller
     public function index()
     {
         // Récupère toutes les transactions de paiement.
-        $paiements = Paiement::latest()->get();
+        $paiements = Paiement::latest()->Paginate(10);
         
         // Affiche la vue 'admin.paiements.index' avec la liste des paiements.
         return view('admin.paiements.index', compact('paiements'));

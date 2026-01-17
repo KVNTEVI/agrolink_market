@@ -74,6 +74,18 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
     Auth::user()->unreadNotifications->markAsRead();
     return back()->with('success', 'Tout est marqué comme lu.');
     })->name('notifications.readAll');
+    Route::get('/notifications/{id}/read-and-view', function ($id) {
+        $notification = Auth::user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+
+        // Si c'est un message, on va vers la conversation
+        if (isset($notification->data['conversation_id'])) {
+            return redirect()->route('acheteur.conversation.show', $notification->data['conversation_id']);
+        }
+        
+        // Sinon on retourne juste à la liste (ou vers la commande si tu as l'id)
+        return back();
+    })->name('notifications.readAndView');
 
     // Messagerie Acheteur
     Route::get('/messages', [AcheteurConversationController::class, 'index'])->name('conversation.index');
@@ -163,6 +175,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Auth::user()->unreadNotifications->markAsRead();
         return response()->json(['status' => 'success']);
     })->name('notifications.readAll');
+
+    // Ajoute ceci dans le groupe Admin
+    Route::get('/notifications/{id}/read-and-view', function ($id) {
+        $notification = Auth::user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+
+        // Redirection vers le détail du paiement pour l'admin
+        if (isset($notification->data['commande_id'])) {
+            return redirect()->route('admin.paiements.show', $notification->data['commande_id']);
+        }
+
+        return back();
+    })->name('notifications.readAndView');
     // ----------------------------------------
 
     Route::get('produits', [ProduitAdminController::class, 'index'])->name('produits.index');

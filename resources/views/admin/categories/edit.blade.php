@@ -13,7 +13,7 @@
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3 border-bottom">
-                <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square text-primary me-2"></i>Modifier la catégorie</h5>
+                <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square text-success me-2"></i>Modifier la catégorie</h5>
             </div>
             <div class="card-body p-4">
                 <form action="{{ route('admin.categories.update', $categorie->id_categorie) }}" method="POST">
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
+                        <button type="submit" class="btn btn-success py-2 fw-bold shadow-sm">
                             Mettre à jour
                         </button>
                     </div>

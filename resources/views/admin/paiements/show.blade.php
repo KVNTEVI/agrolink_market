@@ -7,7 +7,7 @@
         <a href="{{ route('admin.paiements.index') }}" class="btn btn-sm btn-light text-muted mb-3">
             <i class="bi bi-arrow-left me-1"></i> Retour à l'historique
         </a>
-        <h4 class="fw-bold">Détails de la Transaction</h4>
+        <h4 class="fw-bold text-success">Détails de la Transaction</h4>
         <p class="text-muted small">Référence : PAY-{{ str_pad($paiement->id_paiement, 5, '0', STR_PAD_LEFT) }}</p>
     </div>
 

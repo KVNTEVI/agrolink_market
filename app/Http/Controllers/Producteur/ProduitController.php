@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Str;
 
+
 // Contrôleur de gestion des produits par le producteur connecté
 class ProduitController extends Controller
 {
@@ -33,7 +34,8 @@ class ProduitController extends Controller
     // Affiche le formulaire pour ajouter un nouveau produit. (CREATE - Form)
     public function create()
     {
-        return view('producteur.produit.create');
+        $categories = \App\Models\Categorie::all();
+        return view('producteur.produit.create', compact('categories'));
     }
 
     // Enregistre un nouveau produit dans la base de données. (CREATE - Store)
@@ -45,11 +47,13 @@ public function store(Request $request)
         'prix_unitaire' => 'required|numeric|min:0',
         'stock' => 'required|integer|min:0',
         'description' => 'nullable|string',
+        'categorie_id' => 'required|exists:categories,id_categorie',
         'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // Max 2Mo
     ]);
 
     // 2. Création de l'instance du produit
     $produit = new Produit();
+    $produit->categorie_id = $request->categorie_id;
     $produit->nom = $request->nom;
     $produit->prix_unitaire = $request->prix_unitaire;
     $produit->stock = $request->stock;

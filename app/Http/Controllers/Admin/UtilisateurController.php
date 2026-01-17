@@ -31,7 +31,8 @@ public function index(Request $request)
             return $query->where('role_id', $roleFilter);
         })
         ->latest()
-        ->get();
+        ->paginate(10)
+        ->withQueryString();
 
     // TRÈS IMPORTANT : Ajouter 'roleFilter' dans le compact()
     return view('admin.utilisateurs.index', compact('utilisateurs', 'search', 'roleFilter'));

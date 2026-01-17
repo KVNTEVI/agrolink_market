@@ -58,7 +58,9 @@ class AcheteurController extends Controller
         $user = Auth::user();
 
         // On récupère toutes les notifications avec une pagination (10 par page)
-        $allNotifications = $user->notifications()->paginate(10);
+        $allNotifications = $user->notifications()
+            ->latest() 
+            ->paginate(10);
 
         return view('acheteur.notifications', compact('allNotifications'));
     }

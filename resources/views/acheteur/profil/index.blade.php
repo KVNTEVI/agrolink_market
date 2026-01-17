@@ -3,13 +3,13 @@
 @section('title', 'Mon Profil')
 
 @section('content')
-<div class="container-fluid py-4" style="background-color: #f8f9fa; min-height: 100vh;">
+<div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-xl-9">
             
             {{-- En-tête de page --}}
             <div class="mb-4">
-                <h4 class="fw-bold text-dark mb-1">Paramètres du compte</h4>
+                <h4 class="fw-bold text-success mb-1">Paramètres du compte</h4>
                 <p class="text-muted small">Gérez vos informations personnelles et vos adresses de livraison.</p>
             </div>
 

@@ -2,19 +2,19 @@
 @section('title', 'Tableau de bord')
 
 @section('content')
-<div class="container-fluid py-3 py-md-4">
+<div class="container-fluid py-3 py-md-4 min-vh-100">
     {{-- EN-TÊTE HARMONISÉ --}}
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
         <div class="mb-2 mb-md-0">
-            <h4 class="fw-bold mb-1">Tableau de bord acheteur</h4>
+            <h4 class="fw-bold mb-1 text-success">Tableau de bord acheteur</h4>
             <p class="text-muted small mb-0">Bienvenue sur votre espace AgroLink Market</p>
         </div>
-        <div class="text-muted small bg-white p-2 rounded shadow-sm d-inline-block">
-            <i class="bi bi-clock-history me-2"></i>Dernière activité : {{ now()->format('H:i') }}
+        <div class="text-muted small bg-white p-2 px-3 border rounded-4 shadow-sm d-inline-block">
+            <i class="bi bi-clock-history me-2 text-success"></i>Dernière activité : {{ now()->format('H:i') }}
         </div>
     </div>
 
-    {{-- STATISTIQUES (Optimisées pour le tactile) --}}
+    {{-- STATISTIQUES --}}
     <div class="row g-3 g-md-4 mb-5">
         {{-- Commandes en cours --}}
         <div class="col-12 col-sm-6 col-md-4">
@@ -72,17 +72,17 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr class="text-secondary small text-uppercase" style="font-size: 0.75rem;">
-                            <th class="ps-4">Réf</th>
-                            <th>Produit</th>
-                            <th class="d-none d-md-table-cell">Qté</th> {{-- Caché sur mobile pour gagner de la place --}}
-                            <th>Total</th>
-                            <th>Statut</th>
-                            <th class="text-end pe-4">Action</th>
+                    <thead class="table-dark">
+                        <tr class="small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                            <th class="ps-4 py-3 border-0">Réf</th>
+                            <th class="py-3 border-0">Produit</th>
+                            <th class="d-none d-md-table-cell py-3 border-0">Qté</th>
+                            <th class="py-3 border-0">Total</th>
+                            <th class="py-3 border-0">Statut</th>
+                            <th class="text-end pe-4 py-3 border-0">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white">
                         @forelse($dernieresCommandes as $commande)
                         <tr>
                             <td class="ps-4 fw-bold text-dark small">#{{ $commande->id_commande }}</td>
@@ -91,11 +91,11 @@
                                     {{ $commande->items->first()->produit->nom ?? 'Produit inconnu' }}
                                 </div>
                             </td>
-                            <td class="d-none d-md-table-cell">
+                            <td class="d-none d-md-table-cell small text-muted">
                                 {{ $commande->items->sum('quantite') }}
                             </td>
                             <td>
-                                <span class="fw-bold small">{{ number_format($commande->montant_total, 0, ',', ' ') }} <span class="d-none d-sm-inline">FCFA</span></span>
+                                <span class="fw-bold small text-dark">{{ number_format($commande->montant_total, 0, ',', ' ') }} <span class="d-none d-sm-inline">FCFA</span></span>
                             </td>
                             <td>
                                 @php
@@ -108,19 +108,21 @@
                                         default      => 'bg-secondary text-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badgeClass }} bg-opacity-10 border rounded-pill px-2" style="font-size: 0.65rem;">
+                                <span class="badge {{ $badgeClass }} bg-opacity-10 border rounded-pill px-3 fw-normal" style="font-size: 0.65rem;">
                                     {{ ucfirst(str_replace('_', ' ', $commande->statut)) }}
                                 </span>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ route('acheteur.commandes.show', $commande->id_commande) }}" class="btn btn-sm btn-light rounded-pill text-primary border">
-                                    <i class="bi bi-eye"></i>
+                                <a href="{{ route('acheteur.commandes.show', $commande->id_commande) }}" 
+                                   class="btn btn-sm btn-white border shadow-sm rounded-circle p-0 d-inline-flex align-items-center justify-content-center"
+                                   style="width: 32px; height: 32px;">
+                                    <i class="bi bi-eye text-primary"></i>
                                 </a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">Aucune commande récente</td>
+                            <td colspan="6" class="text-center py-5 text-muted bg-white">Aucune commande récente</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -133,5 +135,43 @@
             </a>
         </div>
     </div>
+    </div>
 </div>
+
+<style>
+    /* Global Background */
+    body { background-color: #f0f2f5; }
+
+    /* En-tête de tableau noir mat */
+    .table thead.table-dark tr {
+        background-color: #1a1d20 !important;
+    }
+    
+    .table thead th {
+        color: #ffffff !important;
+        border: none !important;
+        font-weight: 500;
+    }
+
+    /* Style du survol vert demandé */
+    .table-hover tbody tr:hover {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+        transition: background-color 0.15s ease-in-out;
+    }
+
+    /* Bouton blanc pour les détails */
+    .btn-white {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s;
+    }
+
+    .hover-card {
+        transition: transform 0.2s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
 @endsection

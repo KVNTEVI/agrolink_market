@@ -21,7 +21,7 @@
                             {{-- Affichage de l'image de profil --}}
                             <div id="image-preview-container">
                                 @if($user->image)
-                                    <img src="{{ asset('uploads/profils/' . $user->image) }}" 
+                                    <img src="{{ asset('images/utilisateurs/' . $user->image) }}" 
                                          id="profile-img"
                                          alt="Avatar" 
                                          class="rounded-circle shadow-sm object-fit-cover" 

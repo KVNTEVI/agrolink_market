@@ -8,7 +8,7 @@
     {{-- EN-TÊTE --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1">Détail de la commande</h4>
+            <h4 class="fw-bold mb-1 text-success">Détail de la commande</h4>
             <p class="text-muted small mb-0">Récapitulatif complet de votre achat #{{ $commande->id_commande }}</p>
         </div>
         <a href="{{ route('acheteur.commandes.index') }}" class="btn btn-light rounded-pill px-3 shadow-sm btn-sm">

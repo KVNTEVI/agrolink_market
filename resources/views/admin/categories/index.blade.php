@@ -3,28 +3,28 @@
 @section('title', 'Gestion des Catégories')
 
 @section('content')
-<div class="container-fluid">
-    {{-- En-tête avec titre et paragraphe ajoutés --}}
+<div class="container-fluid py-4">
+    {{-- En-tête avec titre et paragraphe --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1">Gestion des catégories</h4>
+            <h4 class="fw-bold mb-1 text-success">Gestion des catégories</h4>
             <p class="text-muted small mb-0">Organisez et gérez les types de produits disponibles sur AgroLink Market</p>
         </div>
         <div class="d-flex gap-3 align-items-center">
             <div class="badge bg-dark p-2 px-3">Total : {{ $categories->count() }}</div>
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-success shadow-sm rounded-3">
-                <i class="bi bi-plus-lg"></i> Ajouter
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-success shadow-sm rounded-3 px-3">
+                <i class="bi bi-plus-lg me-1"></i> Ajouter
             </a>
         </div>
     </div>
 
     {{-- Carte stylisée --}}
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr>
+                        <tr class="text-secondary" style="font-size: 0.9rem;">
                             <th class="ps-4" style="width: 100px;">N°</th>
                             <th>Nom de la catégorie</th>
                             <th>Date de création</th>
@@ -47,7 +47,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="text-muted">
+                                <span class="text-muted small">
                                     <i class="bi bi-calendar3 me-1"></i> 
                                     {{ $categorie->created_at->format('d/m/Y') }}
                                 </span>
@@ -56,7 +56,7 @@
                                 <div class="d-flex justify-content-end gap-2">
                                     {{-- Bouton Modifier --}}
                                     <a href="{{ route('admin.categories.edit', $categorie->id_categorie) }}" 
-                                       class="btn btn-sm btn-light text-primary border-0 shadow-sm" title="Modifier">
+                                       class="btn btn-sm btn-light text-primary border-0 shadow-sm px-2" title="Modifier">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
 
@@ -66,7 +66,7 @@
                                           onsubmit="return confirm('Supprimer cette catégorie ? Cela pourrait affecter les produits liés.')">
                                         @csrf 
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-light text-danger border-0 shadow-sm" title="Supprimer">
+                                        <button type="submit" class="btn btn-sm btn-light text-danger border-0 shadow-sm px-2" title="Supprimer">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -76,7 +76,7 @@
                         @empty
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
-                                <i class="bi bi-folder-x fs-1 d-block mb-2"></i>
+                                <i class="bi bi-folder-x fs-1 d-block mb-2 opacity-25"></i>
                                 Aucune catégorie enregistrée.
                             </td>
                         </tr>
@@ -87,4 +87,29 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Style de l'en-tête sombre pour cohérence avec les autres pages */
+    .table thead.table-light tr {
+        background-color: #1a1d20 !important;
+        color: #ffffff !important;
+    }
+    
+    .table thead.table-light th {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: none;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.8px;
+    }
+
+    /* Suppression des bordures inutiles */
+    .table-hover tbody tr:last-child td {
+        border-bottom: none;
+    }
+</style>
 @endsection

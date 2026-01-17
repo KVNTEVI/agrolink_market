@@ -2,16 +2,15 @@
 @section('title', 'Gestion des Utilisateurs')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" >
     <div class="row align-items-center mb-4 g-3">
         <div class="col-md-4">
-            <h4 class="fw-bold mb-0 text-dark">Contrôle des Utilisateurs</h4>
+            <h4 class="fw-bold mb-0 text-success">Contrôle des Utilisateurs</h4>
             <p class="text-muted small mb-0">Gérez les accès et les rôles de la plateforme AgroLink</p>
         </div>
         
         <div class="col-md-8">
             <form action="{{ route('admin.utilisateurs.index') }}" method="GET" class="row g-2 justify-content-md-end align-items-center">
-                
                 <div class="col-md-5">
                     <select name="role" class="form-select border-0 shadow-sm py-2" onchange="this.form.submit()">
                         <option value="">Tous les rôles</option>
@@ -37,13 +36,12 @@
                     </a>
                 </div>
                 @endif
-
             </form>
         </div>
     </div>
 
     <div class="mb-3 d-flex gap-2">
-        <span class="badge bg-dark p-2 px-3 rounded-pill shadow-sm">Total : {{ $utilisateurs->count() }}</span>
+        <span class="badge bg-dark p-2 px-3 rounded-pill shadow-sm">Total : {{ $utilisateurs->total() }}</span>
         @if($search)
             <span class="badge bg-secondary p-2 px-3 rounded-pill shadow-sm">Résultats pour : "{{ $search }}"</span>
         @endif
@@ -54,7 +52,7 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr class="text-secondary" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <tr class="text-secondary">
                             <th class="ps-4 py-3">Identité & Email</th>
                             <th>Rôle</th>
                             <th>Statut</th>
@@ -64,7 +62,7 @@
                     </thead>
                     <tbody>
                         @forelse($utilisateurs as $u)
-                        <tr @if($u->created_at->isToday()) class="table-info-subtle" style="background-color: #f0f9ff;" @endif>
+                        <tr @if($u->created_at->isToday()) style="background-color: #f8f9fa;" @endif>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center me-3 border" style="width: 42px; height: 42px;">
@@ -88,9 +86,9 @@
                             </td>
                             <td>
                                 @if($u->statut)
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">Actif</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">Actif</span>
                                 @else
-                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">Bloqué</span>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3">Bloqué</span>
                                 @endif
                             </td>
                             <td class="text-muted small">
@@ -102,11 +100,11 @@
                                     <form action="{{ route('admin.utilisateurs.statut', $u->id_utilisateur) }}" method="POST">
                                         @csrf @method('PATCH')
                                         @if($u->statut)
-                                            <button class="btn btn-sm btn-outline-warning rounded-3" title="Bloquer">
+                                            <button class="btn btn-sm btn-light text-warning border-0 shadow-sm" title="Bloquer">
                                                 <i class="bi bi-slash-circle"></i>
                                             </button>
                                         @else
-                                            <button class="btn btn-sm btn-success text-white rounded-3" title="Activer">
+                                            <button class="btn btn-sm btn-dark text-white border-0 shadow-sm" title="Activer">
                                                 <i class="bi bi-check-lg"></i>
                                             </button>
                                         @endif
@@ -114,7 +112,7 @@
 
                                     <form action="{{ route('admin.utilisateurs.destroy', $u->id_utilisateur) }}" method="POST" onsubmit="return confirm('Supprimer définitivement cet utilisateur ?')">
                                         @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger rounded-3">
+                                        <button class="btn btn-sm btn-light text-danger border-0 shadow-sm">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -124,8 +122,8 @@
                         @empty
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
-                                <i class="bi bi-people fs-1 d-block mb-2"></i>
-                                Aucun utilisateur trouvé pour cette recherche.
+                                <i class="bi bi-people fs-1 d-block mb-2 opacity-25"></i>
+                                Aucun utilisateur trouvé.
                             </td>
                         </tr>
                         @endforelse
@@ -133,6 +131,74 @@
                 </table>
             </div>
         </div>
+
+        <div class="card-footer bg-white border-top py-3">
+            <div class="table-pagination d-flex justify-content-center align-items-center">
+                {{ $utilisateurs->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    /* 1. En-tête de tableau sombre */
+    .table thead.table-light tr {
+        background-color: #1a1d20 !important;
+        color: #ffffff !important;
+    }
+    
+    .table thead.table-light th {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: none;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.8px;
+    }
+
+    /* 2. Style de la pagination Noir & Blanc */
+    .table-pagination nav > div:first-child {
+        display: none !important;
+    }
+
+    .table-pagination nav > div:last-child {
+        width: 100%;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .table-pagination .pagination {
+        margin-bottom: 0;
+        gap: 4px;
+    }
+
+    .table-pagination .page-link {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.8rem;
+        border: 1px solid #e0e0e0;
+        background-color: #ffffff;
+        color: #000000;
+        border-radius: 4px !important;
+        transition: all 0.2s ease;
+    }
+
+    .table-pagination .page-link:hover {
+        background-color: #000000;
+        color: #ffffff;
+        border-color: #000000;
+    }
+
+    .table-pagination .page-item.active .page-link {
+        background-color: #000000 !important;
+        border-color: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    .table-pagination .page-link:focus {
+        box-shadow: none !important;
+    }
+</style>
 @endsection
