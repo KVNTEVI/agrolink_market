@@ -25,7 +25,7 @@
     }
 
     .confirm-header {
-        background-color: #27ae60;
+        background-color: #198754;
         color: white;
         text-align: center;
         padding: 1.5rem;
@@ -38,7 +38,7 @@
     }
 
     .btn-confirm {
-        background-color: #27ae60;
+        background-color: #198754;
         border: none;
         padding: 12px;
         font-weight: 600;
@@ -46,12 +46,12 @@
     }
 
     .btn-confirm:hover {
-        background-color: #219150;
+        background-color: #198754;
         transform: translateY(-1px);
     }
 
     .forgot-link {
-        color: #27ae60;
+        color: #198754;
         text-decoration: none;
         font-size: 0.9rem;
         font-weight: 500;
@@ -71,7 +71,7 @@
 
         <div class="card-body p-4 p-md-5 text-center">
             <div class="mb-4">
-                <i class="bi bi-shield-lock-fill text-muted" style="font-size: 3rem; color: #27ae60 !important;"></i>
+                <i class="bi bi-shield-lock-fill text-muted" style="font-size: 3rem; color: #198754 !important;"></i>
                 <h4 class="fw-bold mt-3">{{ __('Zone Sécurisée') }}</h4>
                 <p class="text-muted small">
                     {{ __('Veuillez confirmer votre mot de passe avant de continuer.') }}

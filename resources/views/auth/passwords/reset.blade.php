@@ -15,7 +15,7 @@
     }
 
     .reset-header {
-        background-color: #27ae60;
+        background-color: #198754;
         color: white;
         text-align: center;
         padding: 1.5rem;
@@ -28,7 +28,7 @@
     }
 
     .btn-reset {
-        background-color: #27ae60;
+        background-color: #198754;
         border: none;
         padding: 12px;
         font-weight: 600;
@@ -36,7 +36,7 @@
     }
 
     .btn-reset:hover {
-        background-color: #219150;
+        background-color: #198754;
         transform: translateY(-1px);
     }
 

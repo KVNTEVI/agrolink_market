@@ -21,7 +21,7 @@
     }
 
     .forgot-header {
-        background-color: #27ae60;
+        background-color: #198754;
         color: white;
         text-align: center;
         padding: 1.5rem;
@@ -34,7 +34,7 @@
     }
 
     .btn-send {
-        background-color: #27ae60;
+        background-color: #198754;
         border: none;
         padding: 12px;
         font-weight: 600;
@@ -42,19 +42,19 @@
     }
 
     .btn-send:hover {
-        background-color: #219150;
+        background-color: #198754;
         transform: translateY(-1px);
     }
 
     .alert-status {
         background-color: #d1e7dd;
-        border-left: 5px solid #27ae60;
+        border-left: 5px solid #198754;
         color: #0f5132;
         border-radius: 8px;
     }
 
     .back-to-login {
-        color: #27ae60;
+        color: #198754;
         text-decoration: none;
         font-weight: 500;
     }

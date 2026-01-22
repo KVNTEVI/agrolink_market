@@ -69,6 +69,7 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
     Route::delete('/panier/item/{id}', [PanierController::class, 'remove'])->name('panier.remove');
 
     Route::get('/paiements', [AcheteurPaiementController::class, 'index'])->name('paiements.index');
+    Route::get('/paiements/{id}/recu', [AcheteurPaiementController::class, 'genererRecu'])->name('paiements.recu');
 
     Route::post('/notifications/read-all', function () {
     Auth::user()->unreadNotifications->markAsRead();
@@ -115,6 +116,11 @@ Route::middleware(['auth', 'producteur'])->prefix('producteur')->name('producteu
     // PROFIL (Une seule route pour afficher, une seule pour mettre à jour)
     Route::get('/profil', [ProducteurController::class, 'profil'])->name('profil');
     Route::put('/profil/update', [ProducteurController::class, 'updateProfil'])->name('profil.update');
+
+    Route::get('/profil/password', [ProducteurController::class, 'editPassword'])->name('password.edit');
+    Route::put('/profil/password', [ProducteurController::class, 'updatePassword'])->name('password.update');
+
+    Route::delete('/profil/desactiver', [ProducteurController::class, 'desactiver'])->name('desactiver');
 
     Route::resource('produit', ProduitProducteurController::class);
 

@@ -3,13 +3,13 @@
 @section('title', 'Mon Profil Producteur')
 
 @section('content')
-<div class="container-fluid py-4" style="background-color: #f8f9fa; min-height: 100vh;">
+<div class="container-fluid py-4" >
     <div class="row justify-content-center">
         <div class="col-xl-9">
             
             {{-- En-tête de page --}}
             <div class="mb-4">
-                <h4 class="fw-bold text-dark mb-1">Paramètres du profil Producteur</h4>
+                <h4 class="fw-bold text-success mb-1">Paramètres du profil Producteur</h4>
                 <p class="text-muted small">Gérez vos informations professionnelles et vos coordonnées de contact.</p>
             </div>
 
@@ -49,12 +49,20 @@
 
                     <div class="card border-0 shadow-sm rounded-4 p-3">
                         <h6 class="fw-bold text-dark mb-3 px-2">Sécurité & Accès</h6>
-                        <a href="#" class="btn btn-light btn-sm w-100 text-start rounded-3 mb-2 py-2">
+                        
+                        {{-- Lien vers la page de modification du mot de passe --}}
+                        <a href="{{ route('producteur.password.edit') }}" class="btn btn-light btn-sm w-100 text-start rounded-3 mb-2 py-2">
                             <i class="bi bi-shield-lock me-2 text-primary"></i> Modifier le mot de passe
                         </a>
-                        <a href="#" class="btn btn-light btn-sm w-100 text-start rounded-3 py-2 text-danger">
-                            <i class="bi bi-trash me-2"></i> Désactiver la boutique
-                        </a>
+
+                        {{-- Formulaire pour désactiver la boutique (plus sécurisé qu'un simple lien) --}}
+                        <form action="{{ route('producteur.desactiver') }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre boutique ?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-light btn-sm w-100 text-start rounded-3 py-2 text-danger border-0">
+                                <i class="bi bi-trash me-2"></i> Désactiver la boutique
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -127,7 +135,7 @@
                                 </div>
 
                                 <div class="mt-4 pt-3 text-end">
-                                    <button type="submit" class="btn btn-success rounded-pill px-5 shadow-sm py-2">
+                                    <button type="submit" class="btn btn-success rounded px-5 shadow-sm py-2">
                                         <i class="bi bi-save me-2"></i> Mettre à jour le profil
                                     </button>
                                 </div>

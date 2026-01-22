@@ -63,8 +63,8 @@
                             </td>
 
                             <td class="text-end pe-4">
-                                <a href="#" class="btn btn-sm btn-dark rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-1">
-                                    <i class="bi bi-printer" style="font-size: 0.8rem;"></i> <span style="font-size: 0.75rem;">Reçu</span>
+                                <a href="{{ route('acheteur.paiements.recu', $paiement->id_paiement) }}" class="btn btn-sm btn-white border shadow-sm rounded-pill px-3">
+                                 <i class="bi bi-download me-1"></i> Reçu
                                 </a>
                             </td>
                         </tr>

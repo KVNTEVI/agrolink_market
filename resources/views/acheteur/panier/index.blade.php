@@ -13,7 +13,7 @@
     </div>
 </section>
 
-<section class="py-5">
+<section class="py-5" style="background-color: rgba(25, 135, 84, 0.05);">
     <div class="container">
 
         @if(session('success'))

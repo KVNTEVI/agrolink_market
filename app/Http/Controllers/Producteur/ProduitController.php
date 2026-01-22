@@ -25,7 +25,9 @@ class ProduitController extends Controller
         $producteurId = Auth::id(); 
 
         // Récupère les produits où 'producteur_id' correspond à l'ID stocké.
-        $produits = Produit::where('producteur_id', $producteurId)->get();
+        $produits = Produit::where('producteur_id', $producteurId)
+        ->latest()
+        ->paginate(10);
         
         // Affiche la vue 'producteur.produits.index'.
         return view('producteur.produit.index', compact('produits'));

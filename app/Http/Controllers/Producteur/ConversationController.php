@@ -22,7 +22,7 @@ class ConversationController extends Controller
         $conversations = Conversation::where('producteur_id', Auth::id())
             ->with(['produit', 'acheteur'])
             ->latest()
-            ->get();
+            ->paginate(9);
 
         return view('producteur.conversations.index', compact('conversations'));
     }

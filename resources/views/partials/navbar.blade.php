@@ -42,11 +42,11 @@
                 </a>
 
                 @guest
-                    <a href="{{ route('login') }}" class="btn btn-outline-success btn-sm">
+                    <a href="{{ route('login') }}" class="btn btn-outline-success rounded-pill px-3 btn-sm" style="border-width: 2px; font-weight: 600;">
                         Connexion
                     </a>
 
-                    <a href="{{ route('register') }}" class="btn btn-success btn-sm">
+                    <a href="{{ route('register') }}" class="btn btn-success rounded-pill px-3 btn-sm" style="border-width: 2px; font-weight: 600;">
                         Inscription
                     </a>
                 @else
@@ -147,7 +147,7 @@
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button class="dropdown-item text-danger d-flex align-items-center">
+                                    <button class="dropdown-item text-danger d-flex align-items-center" style="border-width: 2px; font-weight: 600;">
                                         <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
                                     </button>
                                 </form>

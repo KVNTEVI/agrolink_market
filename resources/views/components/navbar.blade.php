@@ -40,10 +40,10 @@
                 
                 @guest
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">Connexion</a>
+                        <a class="nav-link rounded-pill" href="{{ route('login') }}">Connexion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-success ms-2" href="{{ route('register') }}">Créer un compte</a>
+                        <a class="btn btn-success rounded-pill ms-2" href="{{ route('register') }}">Créer un compte</a>
                     </li>
                 @else
                     <li class="nav-item dropdown">

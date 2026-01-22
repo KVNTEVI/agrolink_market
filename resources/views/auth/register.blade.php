@@ -144,7 +144,7 @@
                         <div class="form-check">
                             <input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox" name="terms" id="terms" required>
                             <label class="form-check-label small text-muted" for="terms">
-                                J'accepte les <a href="{{ route('cgu') }}" target="_blank" class="login-link">conditions générales d'utilisation</a> d'AgroLink Market.
+                                J'accepte les <a href="{{ route('cgu') }}" target="_blank" class="login-link">conditions générales d'utilisation et la politique de confidentialité</a> d'AgroLink Market.
                             </label>
                             @error('terms')
                                 <span class="invalid-feedback"><strong>Vous devez accepter les conditions.</strong></span>

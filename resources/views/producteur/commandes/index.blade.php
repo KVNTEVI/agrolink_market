@@ -3,129 +3,105 @@
 @section('title', 'Gestion des Commandes')
 
 @section('content')
-<div class="container-fluid py-4" style="background-color: #f8f9fa; min-height: 100vh;">
+<div class="container-fluid py-4 min-vh-100">
 
-    {{-- EN-TÊTE --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold text-dark mb-1">Commandes reçues</h4>
-            <p class="text-muted small mb-0">Gérez vos ventes et suivez l'état de vos expéditions.</p>
-        </div>
-        <div class="badge bg-white text-dark shadow-sm border p-2 px-3 rounded-pill">
-            <i class="bi bi-filter me-1 text-success"></i> {{ $commandes->count() }} commande(s) au total
-        </div>
+    {{-- EN-TÊTE DE PAGE (Identique au style Acheteur) --}}
+    <div class="mb-4">
+        <h4 class="fw-bold text-success mb-1">Commandes reçues</h4>
+        <p class="text-muted small mb-0"><i class="bi bi-box-seam text-success me-1"></i> Gérez vos ventes et suivez l'état de vos expéditions</p>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success border-0 shadow-sm rounded-4 d-flex align-items-center mb-4">
+        <div class="alert alert-success d-flex align-items-center border-0 shadow-sm rounded-3 mb-4">
             <i class="bi bi-check-circle-fill me-2"></i>
             {{ session('success') }}
         </div>
     @endif
 
-    {{-- CARTE DES COMMANDES --}}
+    {{-- TABLEAU DES COMMANDES --}}
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr class="text-secondary small text-uppercase">
-                            <th class="ps-4 py-3">Réf & Client</th>
-                            <th>Produits commandés</th>
-                            <th>Montant Total</th>
-                            <th>Statut Actuel</th>
-                            <th>Date</th>
-                            <th class="text-end pe-4">Changer Statut</th>
+                    {{-- EN-TÊTE NOIR MAT --}}
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-4 py-3 border-0">Référence</th>
+                            <th class="py-3 border-0">Client</th>
+                            <th class="py-3 border-0">Produits</th>
+                            <th class="py-3 border-0">Montant</th>
+                            <th class="py-3 border-0 text-center">Statut</th>
+                            <th class="py-3 border-0">Date</th>
+                            <th class="text-end pe-4 py-3 border-0">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white">
                         @forelse($commandes as $commande)
                         <tr>
-                            {{-- Référence et Client --}}
-                            <td class="ps-4">
-                                <span class="fw-bold text-dark d-block">#{{ $commande->id_commande }}</span>
-                                <small class="text-muted"><i class="bi bi-person me-1"></i>{{ $commande->acheteur->nom ?? 'Client inconnu' }}</small>
+                            {{-- ID --}}
+                            <td class="ps-4 fw-bold text-dark small text-nowrap">
+                                #{{ $commande->id_commande }}
                             </td>
 
-                            {{-- Détails des produits --}}
-                            <td>
+                            {{-- Client --}}
+                            <td class="small fw-medium">
+                                {{ $commande->acheteur->nom ?? 'Client inconnu' }}
+                            </td>
+
+                            {{-- Produits --}}
+                            <td class="small">
                                 @foreach($commande->items as $item)
-                                    <div class="small">
-                                        <span class="fw-semibold">{{ $item->produit->nom ?? 'Produit supprimé' }}</span> 
-                                        <span class="text-muted">x{{ $item->quantite }}</span>
-                                    </div>
+                                    <div class="text-nowrap">• {{ $item->produit->nom }} <span class="text-muted">(x{{ $item->quantite }})</span></div>
                                 @endforeach
                             </td>
 
                             {{-- Montant --}}
-                            <td>
-                                <span class="fw-bold text-success">{{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA</span>
+                            <td class="text-nowrap fw-bold small">
+                                {{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA
                             </td>
 
-                            {{-- Statut avec badges colorés --}}
-                            <td>
+                            {{-- Statut (Utilisant le même style de badge arrondi que l'acheteur) --}}
+                            <td class="text-center">
                                 @php
-                                    // Définition des couleurs demandées
-                                    $statusClass = [
-                                        'en attente' => 'bg-warning text-dark border-warning',
-                                        'payée'      => 'bg-success text-success border-success',  // Vert pour payé
-                                        'expédiée'   => 'bg-primary text-primary border-primary',  // Bleu pour expédié
-                                        'livrée'     => 'bg-success text-success border-success',  // Vert pour livré
-                                        'annulée'    => 'bg-danger text-danger border-danger',    // Rouge pour annulé
-                                    ][$commande->statut] ?? 'bg-secondary text-secondary border-secondary';
+                                    $statusConfig = [
+                                        'en attente' => ['class' => 'bg-warning text-warning', 'icon' => 'bi-hourglass-split'],
+                                        'payée'      => ['class' => 'bg-success text-success', 'icon' => 'bi-check-circle'],
+                                        'expédiée'   => ['class' => 'bg-primary text-primary', 'icon' => 'bi-truck'],
+                                        'livrée'     => ['class' => 'bg-success text-success', 'icon' => 'bi-check-all'],
+                                        'annulée'    => ['class' => 'bg-danger text-danger', 'icon' => 'bi-x-circle'],
+                                    ][$commande->statut] ?? ['class' => 'bg-secondary text-secondary', 'icon' => 'bi-dot'];
                                 @endphp
-                                
-                                <span class="badge {{ $statusClass }} bg-opacity-10 border rounded-pill px-3 py-2 text-capitalize" style="min-width: 100px;">
-                                    {{ $commande->statut }}
+                                <span class="badge {{ $statusConfig['class'] }} bg-opacity-10 border border-{{ explode('-', $statusConfig['class'])[1] }} border-opacity-25 rounded-pill px-3 fw-normal text-capitalize" style="font-size: 0.7rem;">
+                                    <i class="bi {{ $statusConfig['icon'] }} me-1"></i> {{ $commande->statut }}
                                 </span>
                             </td>
 
                             {{-- Date --}}
                             <td class="small text-muted">
-                                {{ $commande->created_at->format('d/m/Y') }}<br>
-                                {{ $commande->created_at->format('H:i') }}
+                                {{ $commande->created_at->format('d/m/Y') }}
                             </td>
 
-                            {{-- ACTIONS DE CHANGEMENT DE STATUT --}}
+                            {{-- Actions (Dropdown pour le changement de statut) --}}
                             <td class="text-end pe-4">
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-light border rounded-pill px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        Action
+                                    <button class="btn btn-sm btn-white border shadow-sm rounded-pill px-3 fw-bold" type="button" data-bs-toggle="dropdown" style="font-size: 0.75rem;">
+                                        Action <i class="bi bi-chevron-down ms-1" style="font-size: 0.6rem;"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
-                                        <li><h6 class="dropdown-header small text-uppercase">Passer à :</h6></li>
-                                        @if($commande->statut != 'expédiée')
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center" href="{{ route('producteur.commandes.status', [$commande->id_commande, 'expédiée']) }}">
-                                                <i class="bi bi-truck me-2 text-primary"></i> Expédiée
-                                            </a>
-                                        </li>
-                                        @endif
-                                        @if($commande->statut != 'livrée')
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center" href="{{ route('producteur.commandes.status', [$commande->id_commande, 'livrée']) }}">
-                                                <i class="bi bi-check-all me-2 text-success"></i> Livrée
-                                            </a>
-                                        </li>
-                                        @endif
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 small">
+                                        <li><h6 class="dropdown-header text-uppercase opacity-50" style="font-size: 0.65rem;">Changer statut</h6></li>
+                                        <li><a class="dropdown-item py-2" href="{{ route('producteur.commandes.status', [$commande->id_commande, 'expédiée']) }}"><i class="bi bi-truck me-2 text-primary"></i> Expédiée</a></li>
+                                        <li><a class="dropdown-item py-2" href="{{ route('producteur.commandes.status', [$commande->id_commande, 'livrée']) }}"><i class="bi bi-check-all me-2 text-success"></i> Livrée</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center text-danger" href="{{ route('producteur.commandes.status', [$commande->id_commande, 'annulée']) }}">
-                                                <i class="bi bi-x-circle me-2"></i> Annuler
-                                            </a>
-                                        </li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="{{ route('producteur.commandes.status', [$commande->id_commande, 'annulée']) }}"><i class="bi bi-x-circle me-2"></i> Annuler</a></li>
                                     </ul>
                                 </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
-                                <div class="bg-light d-inline-block p-4 rounded-circle mb-3">
-                                    <i class="bi bi-cart-x text-muted fs-1"></i>
-                                </div>
-                                <h5 class="fw-bold text-dark">Aucune commande</h5>
-                                <p class="text-muted">Vous n'avez pas encore reçu de commandes pour vos produits.</p>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="bi bi-receipt display-4 text-muted opacity-25"></i>
+                                <p class="mt-3 text-muted">Aucune commande reçue pour le moment.</p>
                             </td>
                         </tr>
                         @endforelse
@@ -133,13 +109,86 @@
                 </table>
             </div>
         </div>
+
+        {{-- PAGINATION NOIRE (Identique à l'acheteur) --}}
+        <div class="card-footer bg-white border-top py-3">
+            <div class="table-pagination d-flex justify-content-center align-items-center">
+                 {{ $commandes->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    .table tbody tr:hover { background-color: #fcfdfc !important; }
-    .dropdown-item { font-size: 0.85rem; padding: 0.5rem 1rem; }
-    .dropdown-item:hover { background-color: #f8f9fa; }
-    .badge { font-weight: 600; font-size: 0.75rem; }
+    /* Global Background */
+    body { background-color: #f0f2f5; }
+
+    /* En-tête de tableau noir mat */
+    .table thead.table-dark tr {
+        background-color: #1a1d20 !important;
+    }
+    
+    .table thead th {
+        color: #ffffff !important;
+        border: none !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.8px;
+    }
+
+    /* Centrage vertical des cellules */
+    .table tbody td {
+        vertical-align: middle;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    /* Style du survol vert (Effet Acheteur) */
+    .table-hover tbody tr:hover {
+        background-color: rgba(25, 135, 84, 0.1) !important; 
+        transition: background-color 0.15s ease-in-out;
+    }
+
+    /* Style des boutons blancs / Action */
+    .btn-white {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s;
+        color: #212529;
+    }
+
+    .btn-white:hover {
+        background: #f8f9fa;
+        border-color: #198754;
+        color: #198754;
+    }
+
+    /* Pagination Noire Harmonisée */
+    .table-pagination .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 32px;
+        padding: 0 0.8rem;
+        font-size: 0.8rem;
+        border: 1px solid #dee2e6;
+        background-color: #ffffff;
+        color: #000000;
+        border-radius: 4px !important;
+        margin: 0 2px;
+    }
+
+    .table-pagination .page-item.active .page-link {
+        background-color: #000000 !important;
+        border-color: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
 </style>
 @endsection

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="py-5" style="background: linear-gradient(to bottom, #ffffff, #f8f9fa);">
+<section class="py-5" style=" background-color: rgba(25, 135, 84, 0.1);">
     <div class="container">
         <div class="mb-4">
             <a href="{{ route('boutique.index') }}" class="text-muted text-decoration-none small">
@@ -23,7 +23,7 @@
 
             <div class="col-md-5">
                 <div class="ps-md-4">
-                    <span class="badge bg-success-subtle text-success px-3 py-2 mb-3 rounded-pill fw-bold">
+                    <span class="badge bg-white text-success px-3 py-2 mb-3 rounded-pill fw-bold">
                          {{ $produit->categorie->nom ?? 'Agricole' }}
                     </span>
                     

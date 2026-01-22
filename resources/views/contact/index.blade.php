@@ -13,7 +13,7 @@
 </section>
 
 <!-- FORMULAIRE -->
-<section class="py-5">
+<section class="py-5" style="background-color: rgba(25, 135, 84, 0.05); min-height: 100vh;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
@@ -25,7 +25,7 @@
                     </div>
                 @endif
 
-                <div class="card shadow-sm">
+                <div class="card shadow-sm rounded-4">
                     <div class="card-body p-4">
 
                         <h4 class="text-center fw-bold mb-4">
@@ -73,7 +73,7 @@
 
                             <!-- Bouton -->
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-success rounded-pill py-2 fw-bold">
                                     Envoyer le message
                                 </button>
                             </div>

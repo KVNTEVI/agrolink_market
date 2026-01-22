@@ -7,8 +7,11 @@ use App\Models\Commande;
 use App\Models\Paiement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB; 
 use App\Notifications\CommandePayeeNotification;
 use App\Models\Utilisateur;
+use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf; 
 
 class PaiementController extends Controller
 {
@@ -17,32 +20,21 @@ class PaiementController extends Controller
         $this->middleware(['auth', 'acheteur']);
     }
 
-    /**
-     * Affiche l'historique des paiements de l'acheteur avec le total global.
-     */
     public function index()
     {
-        // 1. On prépare la requête de base pour cet acheteur
         $query = Paiement::whereHas('commande', function ($q) {
             $q->where('acheteur_id', Auth::id());
         });
 
-        // 2. On calcule le TOTAL GLOBAL de tous les paiements (toutes pages confondues)
-        // C'est cette variable que tu utiliseras dans l'en-tête de ta vue
         $totalDepense = $query->sum('montant');
 
-        // 3. On récupère les paiements paginés pour le tableau
         $paiements = $query->with('commande')
             ->latest()
             ->paginate(10);
 
-        // 4. On envoie les deux variables à la vue
         return view('acheteur.paiement.index', compact('paiements', 'totalDepense'));
     }
 
-    /**
-     * Affiche la page de confirmation de paiement.
-     */
     public function show($commandeId)
     {
         $commande = Commande::where('id_commande', $commandeId)
@@ -52,13 +44,11 @@ class PaiementController extends Controller
         return view('acheteur.paiement.show', compact('commande'));
     }
 
-    /**
-     * Traite la simulation du paiement.
-     */
     public function payer($commandeId)
     {
         $commande = Commande::where('id_commande', $commandeId)
             ->where('acheteur_id', Auth::id())
+            ->with('items.produit') // On charge les produits liés
             ->firstOrFail();
 
         if ($commande->statut === 'payée') {
@@ -68,18 +58,39 @@ class PaiementController extends Controller
 
         $montantFinal = $commande->montant_total;
 
-        // Création de l'enregistrement
-        Paiement::create([
-            'commande_id' => $commande->id_commande,
-            'montant'     => $montantFinal,
-            'mode'        => request('mode', 'Mobile Money'),
-            'statut'      => 'payée'
-        ]);
+        // --- DEBUT TRANSACTION ---
+        try {
+            DB::transaction(function () use ($commande, $montantFinal) {
+                // 1. Création du paiement
+                Paiement::create([
+                    'commande_id' => $commande->id_commande,
+                    'montant'     => $montantFinal,
+                    'mode'        => request('mode', 'Mobile Money'),
+                    'statut'      => 'payée'
+                ]);
 
-        // Mise à jour de la commande
-        $commande->update(['statut' => 'payée']);
+                // 2. DIMINUTION AUTOMATIQUE DU STOCK
+                foreach ($commande->items as $item) {
+                    $produit = $item->produit;
+                    if ($produit) {
+                        // On vérifie si le stock est suffisant avant de déduire
+                        if ($produit->stock < $item->quantite) {
+                            throw new \Exception("Stock insuffisant pour le produit : " . $produit->nom);
+                        }
+                        $produit->decrement('stock', $item->quantite);
+                    }
+                }
 
-        // Notifications
+                // 3. Mise à jour du statut de la commande
+                $commande->update(['statut' => 'payée']);
+            });
+        } catch (\Exception $e) {
+            return redirect()->route('acheteur.commandes.index')
+                ->with('error', "Échec du paiement : " . $e->getMessage());
+        }
+        // --- FIN TRANSACTION ---
+
+        // 4. Notifications (après le succès de la transaction)
         $producteur = Utilisateur::find($commande->producteur_id);
         $admins = Utilisateur::where('role_id', 1)->get(); 
 
@@ -96,6 +107,19 @@ class PaiementController extends Controller
 
         return redirect()
             ->route('acheteur.commandes.index')
-            ->with('success', "Le paiement de " . number_format($montantFinal, 0, ',', ' ') . " FCFA a été validé.");
+            ->with('success', "Le paiement de " . number_format($montantFinal, 0, ',', ' ') . " FCFA a été validé et le stock mis à jour.");
+    }
+
+    public function genererRecu($id)
+    {
+        $paiement = Paiement::with(['commande.acheteur', 'commande.producteur', 'commande.items.produit'])
+            ->whereHas('commande', function ($q) {
+                $q->where('acheteur_id', Auth::id());
+            })
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('acheteur.paiement.recu_pdf', compact('paiement'));
+
+        return $pdf->download('Recu_AgroLink_#' . $paiement->commande->id_commande . '.pdf');
     }
 }

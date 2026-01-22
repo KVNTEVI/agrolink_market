@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Producteur;
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; // Importé pour sécuriser la transaction
 
 class CommandeController extends Controller
 {
@@ -18,17 +19,13 @@ class CommandeController extends Controller
         $commandes = Commande::where('producteur_id', Auth::id())
             ->with(['items.produit', 'acheteur'])
             ->latest()
-            ->get();
+            ->paginate(10);
 
-        // --- MARQUAGE AUTOMATIQUE COMME LU ---
-        // On marque toutes les notifications de commande comme lues quand il consulte la liste
         Auth::user()->unreadNotifications
             ->filter(function($notification) {
-                // On vérifie si c'est une notification de commande (qui n'a pas de conversation_id)
                 return !isset($notification->data['conversation_id']);
             })
             ->markAsRead();
-        // -------------------------------------
 
         return view('producteur.commandes.index', compact('commandes'));
     }
@@ -36,9 +33,19 @@ class CommandeController extends Controller
     public function updateStatus($id, $status)
     {
         $commande = Commande::where('producteur_id', Auth::id())->findOrFail($id);
+        
+        // Si le producteur annule une commande déjà payée, on rend le stock
+        if ($status == 'annulée' && ($commande->statut == 'payée' || $commande->statut == 'expédiée')) {
+            DB::transaction(function () use ($commande) {
+                foreach ($commande->items as $item) {
+                    $item->produit->increment('stock', $item->quantite);
+                }
+            });
+        }
+
         $commande->statut = $status;
         $commande->save();
 
-        return redirect()->back()->with('success', 'Le statut a été mis à jour en : ' . $status);
+        return redirect()->back()->with('success', 'Statut mis à jour.');
     }
 }
