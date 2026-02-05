@@ -77,7 +77,6 @@
                              class="category-icon">
                     </div>
                     <h6 class="fw-bold text-dark mt-3 mb-0">{{ $cat }}</h6>
-                    <small class="text-success fw-medium opacity-75">Voir les produits</small>
                 </div>
             </div>
             @endforeach
@@ -227,7 +226,6 @@
         filter: brightness(0.95) contrast(1.05);
     }
     .category-item {
-        cursor: pointer;
         transition: all 0.3s ease;
         padding: 10px;
     }

@@ -70,40 +70,37 @@ class ProducteurController extends Controller
         return view('producteur.profil.index', ['user' => Auth::user()]); 
     }
 
-    public function updateProfil(Request $request)
-    {
-        $user = Auth::user();
+public function updateProfil(Request $request)
+{
+    // On récupère l'utilisateur via le modèle pour être sûr que save() fonctionne
+    $user = \App\Models\Utilisateur::find(Auth::id());
 
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'email' => 'required|email|unique:utilisateurs,email,' . $user->id_utilisateur . ',id_utilisateur',
-            'telephone' => 'nullable|string|max:20',
-            'adresse' => 'nullable|string|max:500',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        ]);
+    $request->validate([
+        'nom' => 'required',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+    ]);
 
-        $user->nom = $request->nom;
-        $user->email = $request->email;
-        $user->telephone = $request->telephone;
-        $user->adresse = $request->adresse;
+    $user->nom = $request->nom;
+    $user->email = $request->email;
+    $user->telephone = $request->telephone;
+    $user->adresse = $request->adresse;
 
-        if ($request->hasFile('image')) {
-            $destinationPath = public_path('images/utilisateurs');
-            if ($user->image) {
-                $oldFile = $destinationPath . '/' . $user->image;
-                if (File::exists($oldFile)) {
-                    File::delete($oldFile);
-                }
-            }
-            $file = $request->file('image');
-            $fileName = time() . '_' . $user->id_utilisateur . '.' . $file->getClientOriginalExtension();
-            $file->move($destinationPath, $fileName);
-            $user->image = $fileName;
-            }
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        $fileName = time() . '_' . $user->id_utilisateur . '.' . $file->getClientOriginalExtension();
+        
+        // Déplace le fichier physiquement
+        $file->move(public_path('images/utilisateurs'), $fileName);
 
-        $user->save();
-        return back()->with('success', 'Votre profil a été mis à jour avec succès !');
+        // Met à jour le nom en base de données
+        $user->image = $fileName;
     }
+
+    // Le save() va maintenant envoyer les données à MySQL
+    $user->save(); 
+
+    return back()->with('success', 'Profil mis à jour !');
+}
 
     
 

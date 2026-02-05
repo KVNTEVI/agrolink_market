@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold text-success mb-1">Historique des Paiements</h4>
-            <p class="text-muted small mb-0">Consultez vos transactions et téléchargez vos reçus</p>
+            <p class="text-dark small mb-0">Consultez vos transactions et téléchargez vos reçus</p>
         </div>
         <div class="bg-white border-0 rounded-4 px-3 py-2 shadow-sm">
             <span class="text-muted small">Total dépensé : </span>

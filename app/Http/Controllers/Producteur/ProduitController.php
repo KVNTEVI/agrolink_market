@@ -106,8 +106,9 @@ public function edit($id)
 {
     // On vérifie que le produit appartient bien au producteur connecté
     $produit = Produit::where('producteur_id', Auth::id())->findOrFail($id);
+    $categories = \App\Models\Categorie::all();
     
-    return view('producteur.produit.edit', compact('produit'));
+    return view('producteur.produit.edit', compact('produit', 'categories'));
 }
 
 // Met à jour le produit (UPDATE)
@@ -121,6 +122,7 @@ public function update(Request $request, $id)
         'prix_unitaire' => 'required|numeric|min:0',
         'stock' => 'required|integer|min:0',
         'description' => 'nullable|string',
+        'categorie_id' => 'required|exists:categories,id_categorie',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // nullable car optionnelle ici
     ]);
 
@@ -129,6 +131,7 @@ public function update(Request $request, $id)
     $produit->prix_unitaire = $request->prix_unitaire;
     $produit->stock = $request->stock;
     $produit->description = $request->description;
+    $produit->categorie_id = $request->categorie_id;
 
     // 3. Gestion de la nouvelle image (si fournie)
     if ($request->hasFile('image')) {

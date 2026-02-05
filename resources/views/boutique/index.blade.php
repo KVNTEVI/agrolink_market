@@ -24,20 +24,21 @@
                                 <div class="input-group border rounded-3 overflow-hidden">
                                     <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
                                     <input type="text" name="search" class="form-control border-0 shadow-none" 
-                                           placeholder="Ex: Riz, Tomate..." value="{{ request('search') }}">
+                                           placeholder="Ex: soja, café..." value="{{ request('search') }}">
                                 </div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="small fw-bold text-muted mb-2">Catégorie</label>
-                                <select name="categorie" class="form-select border-1 rounded-3 shadow-none">
-                                    <option value="">Toutes les catégories</option>
-                                    @foreach($categories as $categorie)
-                                        <option value="{{ $categorie->id }}" {{ request('categorie') == $categorie->id ? 'selected' : '' }}>
-                                            {{ $categorie->nom }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                    <select name="categorie" class="form-select border-1 rounded-3 shadow-none">
+                                        <option value="">Toutes les catégories</option>
+                                        @foreach($categories as $categorie)
+                                            {{-- Remplace ->id par ->id_categorie ici --}}
+                                            <option value="{{ $categorie->id_categorie }}" {{ request('categorie') == $categorie->id_categorie ? 'selected' : '' }}>
+                                                {{ $categorie->nom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                             </div>
 
                             <button class="btn btn-success w-100 rounded-pill fw-bold py-2 shadow-sm transition-all">
@@ -104,7 +105,7 @@
                 </div>
 
                 <div class="d-flex justify-content-center mt-5">
-                    {{ $produits->withQueryString()->links('pagination::bootstrap-5') }}
+                    {{ $produits->withQueryString()->links('pagination::bootstrap-4') }}
                 </div>
             </div>
 
@@ -155,6 +156,31 @@
     .btn-success:hover {
         transform: scale(1.02);
     }
+
+    /* Masquer le texte "Showing X to Y of Z results" */
+.pagination nav div:first-child p.text-muted {
+    display: none !important;
+}
+
+/* Personnalisation de la pagination en vert */
+.pagination .page-link {
+    color: #198754 !important; /* Vert success */
+    border-radius: 8px !important;
+    margin: 0 3px;
+    border-color: #dee2e6;
+    background-color: white;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: white !important;
+}
+
+.pagination .page-link:hover {
+    background-color: #f0fdf4;
+    color: #146c43 !important;
+}
 </style>
 
 @endsection

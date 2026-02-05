@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Commande;
 use App\Models\CommandeItem;
 use App\Models\Conversation;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rules\Password;
 
 // Contrôleur dédié au tableau de bord et à la gestion du profil de l'acheteur
 class AcheteurController extends Controller
@@ -122,18 +125,74 @@ class AcheteurController extends Controller
     }
 
     // Gère la mise à jour des informations du profil (nom, email).
-    public function updateProfil(Request $request)
-    {
-        /** @var \App\Models\Utilisateur $user */
-        $user = Auth::user(); 
+public function updateProfil(Request $request)
+{
+    /** @var \App\Models\Utilisateur $user */
+    $user = Auth::user();
 
+    $request->validate([
+        'nom' => 'required|string|max:255',
+        'email' => 'required|email|unique:utilisateurs,email,' . $user->id_utilisateur . ',id_utilisateur',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+    ]);
+
+    // Mise à jour des textes
+    $user->nom = $request->nom;
+    $user->email = $request->email;
+    $user->telephone = $request->telephone;
+    $user->adresse = $request->adresse;
+
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        
+        // Création d'un nom unique
+        $fileName = time() . '_' . $user->id_utilisateur . '.' . $file->getClientOriginalExtension();
+        
+        // Déplacement du fichier
+        $file->move(public_path('images/utilisateurs'), $fileName);
+
+        // Suppression de l'ancienne image si elle existe
+        if ($user->image && File::exists(public_path('images/utilisateurs/' . $user->image))) {
+            File::delete(public_path('images/utilisateurs/' . $user->image));
+        }
+
+        // IMPORTANT : On enregistre le NOM du fichier en base de données
+        $user->image = $fileName;
+    }
+
+    $user->save(); // On force la sauvegarde en base de données
+
+    return back()->with('success', 'Profil mis à jour !');
+}
+
+    public function updatePassword(Request $request)
+    {
         $request->validate([
-            'nom' => 'required',
-            'email' => 'required|email'
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        $user->update($request->only(['nom', 'email']));
+        /** @var \App\Models\Utilisateur $user */
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->save();
 
-        return back()->with('success', 'Profil mis à jour.');
+        return back()->with('success', 'Mot de passe modifié avec succès !');
+    }
+
+    public function detruireCompte()
+    {
+        /** @var \App\Models\Utilisateur $user */
+        $user = Auth::user();
+        
+        // Supprimer l'image du serveur si elle existe
+        if ($user->image) {
+            File::delete(public_path('images/utilisateurs/' . $user->image));
+        }
+
+        $user->delete(); // Supprime l'entrée en base de données
+        Auth::logout();
+        
+        return redirect('/')->with('success', 'Votre compte a été supprimé définitivement.');
     }
 }

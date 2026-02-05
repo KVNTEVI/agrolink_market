@@ -59,8 +59,14 @@ Route::get('/conditions-generales', function () { return view('legal.cgu'); })->
 */
 Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->group(function () {
     Route::get('/dashboard', [AcheteurController::class, 'dashboard'])->name('dashboard');
+
     Route::get('/profil', [AcheteurController::class, 'profil'])->name('profil');
-    Route::post('/profil', [AcheteurController::class, 'updateProfil'])->name('profil.update');
+    // On change POST en PUT pour correspondre au standard et à la vue
+    Route::put('/profil', [AcheteurController::class, 'updateProfil'])->name('profil.update'); 
+    // Route pour le mot de passe
+    Route::put('/profil/password', [AcheteurController::class, 'updatePassword'])->name('password.update');
+    // Route pour la suppression de compte
+    Route::delete('/profil/delete', [AcheteurController::class, 'detruireCompte'])->name('profil.delete');
     
     Route::get('/notifications', [AcheteurController::class, 'notifications'])->name('notifications.index');
 
@@ -70,6 +76,8 @@ Route::middleware(['auth', 'acheteur'])->prefix('acheteur')->name('acheteur.')->
 
     Route::get('/paiements', [AcheteurPaiementController::class, 'index'])->name('paiements.index');
     Route::get('/paiements/{id}/recu', [AcheteurPaiementController::class, 'genererRecu'])->name('paiements.recu');
+
+    Route::patch('/panier/update/{id}', [PanierController::class, 'update'])->name('panier.update');
 
     Route::post('/notifications/read-all', function () {
     Auth::user()->unreadNotifications->markAsRead();
@@ -157,6 +165,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/utilisateurs/{id}/statut', [UtilisateurController::class, 'toggleStatut'])->name('utilisateurs.statut');
     Route::delete('/utilisateurs/{id}', [UtilisateurController::class, 'destroy'])->name('utilisateurs.destroy');
 
+    Route::get('/profil', [AdminController::class, 'profil'])->name('profil');
+    Route::put('/profil/update', [AdminController::class, 'updateProfil'])->name('profil.update');
+
     Route::resource('categories', CategorieController::class);
     Route::resource('avis', AvisController::class)->only(['index', 'destroy']);
     
@@ -179,7 +190,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Le nom final sera automatiquement 'admin.notifications.readAll'
     Route::post('/notifications/read-all', function () {
         Auth::user()->unreadNotifications->markAsRead();
-        return response()->json(['status' => 'success']);
+        return back()->with('success', 'Toutes les alertes ont été traitées.');
     })->name('notifications.readAll');
 
     // Ajoute ceci dans le groupe Admin
@@ -187,12 +198,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         $notification = Auth::user()->notifications()->findOrFail($id);
         $notification->markAsRead();
 
-        // Redirection vers le détail du paiement pour l'admin
         if (isset($notification->data['commande_id'])) {
-            return redirect()->route('admin.paiements.show', $notification->data['commande_id']);
+            // On cherche le paiement qui appartient à cette commande
+            $paiement = \App\Models\Paiement::where('commande_id', $notification->data['commande_id'])->first();
+
+            if ($paiement) {
+                // On redirige vers le paiement trouvé
+                return redirect()->route('admin.paiements.show', $paiement->id_paiement);
+            }
         }
 
-        return back();
+        // Si pas de paiement trouvé, on reste sur place avec un message
+        return back()->with('info', 'Détails du paiement indisponibles.');
     })->name('notifications.readAndView');
     // ----------------------------------------
 

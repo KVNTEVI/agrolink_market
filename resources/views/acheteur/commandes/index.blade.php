@@ -12,12 +12,12 @@
     </div>
 
     {{-- MESSAGE SUCCÈS --}}
-    @if(session('success'))
+    <!-- @if(session('success'))
         <div class="alert alert-success d-flex align-items-center border-0 shadow-sm rounded-3">
             <i class="bi bi-check-circle-fill me-2"></i>
             {{ session('success') }}
         </div>
-    @endif
+    @endif -->
 
     {{-- AUCUNE COMMANDE --}}
     @if($commandes->isEmpty())

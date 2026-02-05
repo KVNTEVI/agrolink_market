@@ -10,7 +10,7 @@
             {{-- En-tête de page --}}
             <div class="mb-4">
                 <h4 class="fw-bold text-success mb-1">Paramètres du profil Producteur</h4>
-                <p class="text-muted small">Gérez vos informations professionnelles et vos coordonnées de contact.</p>
+                <p class="text-dark small">Gérez vos informations professionnelles et vos coordonnées de contact.</p>
             </div>
 
             <div class="row g-4">
@@ -51,9 +51,9 @@
                         <h6 class="fw-bold text-dark mb-3 px-2">Sécurité & Accès</h6>
                         
                         {{-- Lien vers la page de modification du mot de passe --}}
-                        <a href="{{ route('producteur.password.edit') }}" class="btn btn-light btn-sm w-100 text-start rounded-3 mb-2 py-2">
+                        <button type="button" class="btn btn-light btn-sm w-100 text-start rounded-3 mb-2 py-2" data-bs-toggle="modal" data-bs-target="#modalPassword">
                             <i class="bi bi-shield-lock me-2 text-primary"></i> Modifier le mot de passe
-                        </a>
+                        </button>
 
                         {{-- Formulaire pour désactiver la boutique (plus sécurisé qu'un simple lien) --}}
                         <form action="{{ route('producteur.desactiver') }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre boutique ?');">
@@ -136,7 +136,7 @@
 
                                 <div class="mt-4 pt-3 text-end">
                                     <button type="submit" class="btn btn-success rounded px-5 shadow-sm py-2">
-                                        <i class="bi bi-save me-2"></i> Mettre à jour le profil
+                                        <i class="bi bi-save me-2"></i> Mettre à jour
                                     </button>
                                 </div>
                             </form>
@@ -148,14 +148,69 @@
     </div>
 </div>
 
+{{-- MODAL POUR CHANGER LE MOT DE PASSE --}}
+<div class="modal fade" id="modalPassword" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header border-0">
+                <h5 class="fw-bold mb-0">Changer mon mot de passe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('producteur.password.update') }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Mot de passe actuel</label>
+                        <input type="password" name="current_password" class="form-control bg-light border border-dark" style="border-width: 1px !important;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Nouveau mot de passe</label>
+                        <input type="password" name="password" class="form-control bg-light border border-dark" style="border-width: 1px !important;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Confirmer le nouveau mot de passe</label>
+                        <input type="password" name="password_confirmation" class="form-control bg-light border border-dark" style="border-width: 1px !important;" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-success w-100 rounded-pill">Valider le changement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
-    .form-control:focus {
-        background-color: #fff !important;
-        border: 1px solid #198754 !important;
-        box-shadow: none;
+    /* Bordure noire 1px pour TOUS les champs de saisie de la page */
+    .form-control, .form-select, .input-group-text {
+        border: 1px solid #c2c2c2 !important;
+        background-color: #ffffff !important;
     }
-    .input-group-text { border-radius: 10px 0 0 10px; }
-    .form-control { border-radius: 0 10px 10px 0; }
+
+    /* Style spécifique pour les icônes à gauche des inputs */
+    .input-group-text {
+        border-right: none !important; /* Évite la double bordure entre l'icône et l'input */
+        border-radius: 10px 0 0 10px !important;
+    }
+
+    /* Style spécifique pour le champ collé à l'icône */
+    .input-group .form-control {
+        border-radius: 0 10px 10px 0 !important;
+    }
+
+    /* État au clic (Focus) : On garde une bordure verte pour montrer la sélection */
+    .form-control:focus {
+        border-color: #198754 !important;
+        box-shadow: 0 0 0 0.1rem rgba(25, 135, 84, 0.25) !important;
+        background-color: #fff !important;
+    }
+
+    /* Ajustement pour les boutons du modal */
+    .modal-content {
+        border: none;
+    }
+
     .object-fit-cover { object-fit: cover; }
 </style>
 

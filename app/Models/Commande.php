@@ -8,7 +8,7 @@ class Commande extends Model
 {
     protected $primaryKey = 'id_commande';
     protected $fillable = [
-        'acheteur_id','producteur_id','montant_total','statut'
+        'acheteur_id','producteur_id','montant_total','statut','commission_montant', 'montant_net_producteur'
     ];
 
     public function acheteur()

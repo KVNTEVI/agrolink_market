@@ -8,7 +8,7 @@
     {{-- EN-TÊTE DE PAGE (Identique au style Acheteur) --}}
     <div class="mb-4">
         <h4 class="fw-bold text-success mb-1">Commandes reçues</h4>
-        <p class="text-muted small mb-0"><i class="bi bi-box-seam text-success me-1"></i> Gérez vos ventes et suivez l'état de vos expéditions</p>
+        <p class="text-dark small mb-0"><i class="bi bi-box-seam text-success me-1"></i> Gérez vos ventes et suivez l'état de vos expéditions</p>
     </div>
 
     @if(session('success'))

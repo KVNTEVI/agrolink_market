@@ -229,13 +229,12 @@
     .step-card {
         transition: all 0.3s ease;
         background-color: #fff;
-        border: 1px solid rgba(0,0,0,0.05) !important;
+        border: 2px solid #198754 !important; 
     }
-
     .step-card:hover {
         transform: translateY(-10px);
         box-shadow: 0 15px 30px rgba(25, 135, 84, 0.1) !important;
-        border-color: rgba(25, 135, 84, 0.2) !important;
+        border-color: #146c43 !important; 
     }
 
     /* Conteneur d'icône circulaire */
@@ -322,16 +321,17 @@
 
     /* Conteneur de la statistique */
     .stat-item {
-        background-color: #f8fdfa; /* Vert très pâle */
-        border: 1px solid rgba(25, 135, 84, 0.05);
+        background-color: #f8fdfa;
+        border: 2px solid #198754 !important; 
         transition: all 0.3s ease;
     }
 
-    .stat-item:hover {
-        background-color: #ffffff;
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08) !important;
-    }
+.stat-item:hover {
+    background-color: #ffffff;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(25, 135, 84, 0.15) !important;
+    border-color: #146c43 !important;
+}
 
     /* Cercle pour l'icône */
     .stat-icon-circle {

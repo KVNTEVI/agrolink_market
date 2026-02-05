@@ -15,59 +15,80 @@
         </div>
     </div>
 
-    {{-- Cartes de statistiques --}}
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
+    {{-- Cartes de statistiques : Alignement de 5 cartes --}}
+    <div class="row g-3 mb-5">
+        {{-- Utilisateurs --}}
+        <div class="col-12 col-sm-6 col-xl">
             <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-people text-primary fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Utilisateurs</small>
-                        <h4 class="mb-0 fw-bold">{{ $totalUtilisateurs }}</h4>
+                        <small class="text-muted d-block mb-1">Utilisateurs</small>
+                        <h5 class="mb-0 fw-bold">{{ $totalUtilisateurs }}</h5>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
+        {{-- Produits --}}
+        <div class="col-12 col-sm-6 col-xl">
             <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-success bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-box-seam text-success fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Produits</small>
-                        <h4 class="mb-0 fw-bold">{{ $totalProduits }}</h4>
+                        <small class="text-muted d-block mb-1">Produits</small>
+                        <h5 class="mb-0 fw-bold">{{ $totalProduits }}</h5>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
+        {{-- Catégories --}}
+        <div class="col-12 col-sm-6 col-xl">
             <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-warning bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-tags text-warning fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Catégories</small>
-                        <h4 class="mb-0 fw-bold">{{ $totalCategories }}</h4>
+                        <small class="mb-0 small text-muted">Catégories</small>
+                        <h5 class="mb-0 fw-bold">{{ $totalCategories }}</h5>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
+        {{-- Paiements --}}
+        <div class="col-12 col-sm-6 col-xl">
             <div class="card border-0 shadow-sm rounded-4 p-2 h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="bg-info bg-opacity-10 p-3 rounded-4 me-3">
                         <i class="bi bi-credit-card text-info fs-4"></i>
                     </div>
                     <div>
-                        <small class="text-muted d-block text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Paiements</small>
-                        <h4 class="mb-0 fw-bold text-nowrap">{{ number_format($totalPaiements, 0, ',', ' ') }}</h4>
+                        <small class="text-muted d-block mb-1">Paiements</small>
+                        <h5 class="mb-0 fw-bold text-nowrap">{{ number_format($totalPaiements, 0, ',', ' ') }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Revenus Plateforme --}}
+        <div class="col-12 col-sm-6 col-xl">
+            <div class="card border-0 shadow-sm rounded-4 p-2 h-100 bg-dark">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success bg-opacity-25 p-3 rounded-4 me-3">
+                        <i class="bi bi-piggy-bank text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <small class="text-white-50 d-block mb-1">Revenus (5%)</small>
+                        <h5 class="mb-0 fw-bold text-white text-nowrap">
+                            {{ number_format($revenusPlateforme, 0, ',', ' ') }} <small style="font-size: 0.6em">FCFA</small>
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -149,7 +170,7 @@
     /* Global Background */
     body { background-color: #f0f2f5; }
 
-    /* Style identique à vos autres pages Admin */
+    /* Style des en-têtes de table */
     .table thead.table-dark tr {
         background-color: #1a1d20 !important;
     }
@@ -176,6 +197,11 @@
     }
     .card.shadow-sm:hover {
         transform: translateY(-3px);
+    }
+
+    /* Ajustement responsive pour petits écrans */
+    @media (max-width: 1200px) {
+        h5.mb-0 { font-size: 1rem; }
     }
 </style>
 @endsection

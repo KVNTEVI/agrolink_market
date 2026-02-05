@@ -69,6 +69,17 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
 
+        /* AJOUTS RESPONSIVE (Strictement comme Admin/Producteur) */
+        .mobile-admin-bar {
+            display: none;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 10px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+        }
+
         /* Overlay mobile */
         .sidebar-overlay {
             display: none;
@@ -76,10 +87,15 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 1040;
+            z-index: 1045;
         }
 
         @media (max-width: 991.98px) {
+            .mobile-admin-bar { 
+                display: flex; 
+                align-items: center; 
+                justify-content: space-between;
+            }
             .sidebar { left: -260px; }
             .sidebar.show { left: 0; }
             .sidebar-overlay.show { display: block; }
@@ -88,6 +104,14 @@
     </style>
 </head>
 <body>
+
+<div class="mobile-admin-bar shadow-sm">
+    <button class="navbar-toggler border-0" type="button" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-2 text-success"></i>
+    </button>
+    <span class="fw-bold text-success">Acheteur AgroLink</span>
+    <div style="width: 40px;"></div>
+</div>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -161,13 +185,6 @@
     </aside>
 
     <main class="main-content">
-        <div class="d-lg-none p-3 bg-white border-bottom d-flex align-items-center">
-            <button class="btn btn-success me-3" onclick="toggleSidebar()">
-                <i class="bi bi-list fs-4"></i>
-            </button>
-            <span class="fw-bold text-success">Espace Acheteur</span>
-        </div>
-
         <div class="p-4">
             @if(session('success'))
                 <div class="alert alert-success border-0 shadow-sm d-flex align-items-center">

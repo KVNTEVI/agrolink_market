@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Utilisateur;
 use App\Models\Produit;
+use Illuminate\Http\Request;
 
 /**
  * Ce contrôleur gère l'affichage des profils des producteurs et de leurs catalogues spécifiques.
@@ -15,15 +16,17 @@ class MagazinController extends Controller
      * Affiche la liste de tous les producteurs inscrits et actifs.
      * * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request) // Ajoutez Request $request ici
     {
-        // 1. On filtre les utilisateurs par leur rôle
-        $producteurs = Utilisateur::where('role_id', 3)->get();
-            // 2. On vérifie que le compte du producteur est actif (statut true)
-            // ->where('statut', true)
-            // ->get();
+        // 1. On filtre les utilisateurs par leur rôle (producteur)
+        $producteurs = Utilisateur::where('role_id', 3)
+            // 2. Ajout du filtre de recherche par nom
+            ->when($request->search, function ($q) use ($request) {
+                $q->where('nom', 'like', '%' . $request->search . '%');
+            })
+            // 3. On affiche 9 producteurs par page
+            ->paginate(9);
 
-        // 3. Retourne la vue avec la liste des vendeurs
         return view('magazin.index', compact('producteurs'));
     }
 

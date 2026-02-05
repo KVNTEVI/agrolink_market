@@ -58,9 +58,14 @@ class PaiementController extends Controller
 
         $montantFinal = $commande->montant_total;
 
+        // --- CALCULS DU BUSINESS MODEL (5%) ---
+        $tauxCommission = 0.05;
+        $commission = $montantFinal * $tauxCommission;
+        $netProducteur = $montantFinal - $commission;
+
         // --- DEBUT TRANSACTION ---
         try {
-            DB::transaction(function () use ($commande, $montantFinal) {
+            DB::transaction(function () use ($commande, $montantFinal, $commission, $netProducteur) {
                 // 1. Création du paiement
                 Paiement::create([
                     'commande_id' => $commande->id_commande,
@@ -81,8 +86,12 @@ class PaiementController extends Controller
                     }
                 }
 
-                // 3. Mise à jour du statut de la commande
-                $commande->update(['statut' => 'payée']);
+                // 3. Mise à jour du statut de la commande ET des montants de commission
+                $commande->update([
+                    'statut' => 'payée',
+                    'commission_montant' => $commission,
+                    'montant_net_producteur' => $netProducteur
+                ]);
             });
         } catch (\Exception $e) {
             return redirect()->route('acheteur.commandes.index')
@@ -107,7 +116,7 @@ class PaiementController extends Controller
 
         return redirect()
             ->route('acheteur.commandes.index')
-            ->with('success', "Le paiement de " . number_format($montantFinal, 0, ',', ' ') . " FCFA a été validé et le stock mis à jour.");
+            ->with('success', "Le paiement de " . number_format($montantFinal, 0, ',', ' ') . " FCFA a été validé. (Commission de " . number_format($commission, 0, ',', ' ') . " FCFA prélevée)");
     }
 
     public function genererRecu($id)

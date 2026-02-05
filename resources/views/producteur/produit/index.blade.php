@@ -9,7 +9,7 @@
     <div class="row mb-4 align-items-center">
         <div class="col">
             <h4 class="fw-bold text-success mb-1">Gestion du catalogue</h4>
-            <p class="text-muted small mb-0"><i class="bi bi-box-seam text-success me-1"></i> Gérez vos stocks et la visibilité de vos produits</p>
+            <p class="text-dark small mb-0"><i class="bi bi-box-seam text-success me-1"></i> Gérez vos stocks et la visibilité de vos produits</p>
         </div>
         <div class="col-auto">
             <a href="{{ route('producteur.produit.create') }}" class="btn btn-success rounded px-4 shadow-sm fw-bold">

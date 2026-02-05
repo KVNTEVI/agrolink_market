@@ -132,4 +132,5 @@
         100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
     }
 </style>
+
 @endsection

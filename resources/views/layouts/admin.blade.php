@@ -7,6 +7,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>
+
+    /* Animation de la flèche pour les sous-menus */
+    .nav-link .ms-auto {
+        transition: transform 0.3s ease;
+    }
+    .nav-link[aria-expanded="true"] .ms-auto {
+        transform: rotate(180deg);
+    }
+
+    /* Style des sous-liens */
+    .submenu .nav-link {
+        margin: 2px 15px 2px 35px !important;
+        font-size: 0.85rem;
+        padding: 8px 15px !important;
+    }
+    
     .wrapper { display: flex; min-height: 100vh; }
     
     /* Sidebar plus moderne */
@@ -19,6 +35,8 @@
         position: fixed;
         height: 100vh;
         box-shadow: 4px 0 10px rgba(0,0,0,0.02); /* Ombre légère pour décoller du fond */
+        z-index: 1050;
+        transition: transform 0.3s ease; /* Ajout transition pour le menu mobile */
     }
 
     /* Liens de navigation avec transition */
@@ -31,6 +49,7 @@
         margin: 4px 15px;
         transition: all 0.3s ease;
         font-weight: 500;
+        text-decoration: none;
     }
 
     /* Style Actif : fond vert très clair et texte vert foncé */
@@ -48,6 +67,7 @@
         flex: 1; 
         background-color: rgba(25, 135, 84, 0.1); 
         margin-left: 260px;
+        min-width: 0;
     }
 
     /* Bouton retour arrondi type pilule */
@@ -66,11 +86,58 @@
         margin-bottom: 10px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
+
+    /* --- AJOUTS POUR LE RESPONSIVE --- */
+    
+    /* Le bouton hamburger style Navbar */
+    .mobile-admin-bar {
+        display: none;
+        background: #ffffff;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding: 10px 15px;
+        position: sticky;
+        top: 0;
+        z-index: 1040;
+    }
+
+    @media (max-width: 991px) {
+        .mobile-admin-bar { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+        }
+        .sidebar { transform: translateX(-100%); } /* Cache la sidebar */
+        .sidebar.show { transform: translateX(0); } /* Affiche la sidebar */
+        .main-content { margin-left: 0; } /* Contenu pleine largeur */
+        
+        /* Overlay sombre quand le menu est ouvert */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1045;
+        }
+        .sidebar-overlay.active { display: block; }
+    }
 </style>
 </head>
 <body>
+
+<div class="mobile-admin-bar shadow-sm">
+    <button class="navbar-toggler border-0" type="button" id="mobile-toggle">
+        <i class="bi bi-list fs-2 text-success"></i>
+    </button>
+    <span class="fw-bold text-success">Admin AgroLink</span>
+    <div style="width: 40px;"></div> </div>
+
+<div class="sidebar-overlay" id="overlay"></div>
+
 <div class="wrapper">
-    <aside class="sidebar d-flex flex-column">
+    <aside class="sidebar d-flex flex-column" id="adminSidebar">
         <div class="p-4 border-bottom text-center">
             <div class="text-success fw-bold fs-5 mb-3" style="letter-spacing: 1px;">
                 <i class="bi bi-shield-check"></i> Administrateur
@@ -80,43 +147,84 @@
             </a>
         </div>
 
-        <nav class="mt-3 flex-grow-1">
+        <nav class="mt-3 flex-grow-1 overflow-auto">
             <ul class="nav flex-column">
+                
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <i class="bi bi-grid-1x2"></i> Tableau de bord
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a href="{{ route('admin.utilisateurs.index') }}" class="nav-link {{ request()->routeIs('admin.utilisateurs.*') ? 'active' : '' }}">
-                        <i class="bi bi-people"></i> Utilisateurs
+                    <a class="nav-link {{ request()->routeIs('admin.utilisateurs.*') ? 'active' : '' }}" 
+                    data-bs-toggle="collapse" href="#menuUsers" role="button" 
+                    aria-expanded="{{ request()->routeIs('admin.utilisateurs.*') ? 'true' : 'false' }}">
+                        <i class="bi bi-people"></i> Communauté
+                        <i class="bi bi-chevron-down ms-auto small"></i>
                     </a>
+                    <div class="collapse {{ request()->routeIs('admin.utilisateurs.*') ? 'show' : '' }}" id="menuUsers">
+                        <ul class="nav flex-column submenu">
+                            <li>
+                                <a href="{{ route('admin.utilisateurs.index') }}" class="nav-link">
+                                    Liste des utilisateurs
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
+
                 <li class="nav-item">
-                    <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                        <i class="bi bi-tags"></i> Catégories
+                    <a class="nav-link {{ request()->routeIs('admin.produits.*') || request()->routeIs('admin.categories.*') ? 'active' : '' }}" 
+                    data-bs-toggle="collapse" href="#menuCatalog" role="button" 
+                    aria-expanded="{{ request()->routeIs('admin.produits.*') || request()->routeIs('admin.categories.*') ? 'true' : 'false' }}">
+                        <i class="bi bi-box-seam"></i> Catalogue
+                        <i class="bi bi-chevron-down ms-auto small"></i>
                     </a>
+                    <div class="collapse {{ request()->routeIs('admin.produits.*') || request()->routeIs('admin.categories.*') ? 'show' : '' }}" id="menuCatalog">
+                        <ul class="nav flex-column submenu">
+                            <li>
+                                <a href="{{ route('admin.produits.index') }}" class="nav-link">Modérer les produits</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.categories.index') }}" class="nav-link">Catégories</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
+
                 <li class="nav-item">
-                    <a href="{{ route('admin.produits.index') }}" class="nav-link {{ request()->routeIs('admin.produits.*') ? 'active' : '' }}">
-                        <i class="bi bi-box-seam"></i> Modérer les Produits
+                    <a class="nav-link {{ request()->routeIs('admin.paiements.*') ? 'active' : '' }}" 
+                    data-bs-toggle="collapse" href="#menuFinance" role="button" 
+                    aria-expanded="{{ request()->routeIs('admin.paiements.*') ? 'true' : 'false' }}">
+                        <i class="bi bi-wallet2"></i> Finance
+                        <i class="bi bi-chevron-down ms-auto small"></i>
                     </a>
+                    <div class="collapse {{ request()->routeIs('admin.paiements.*') ? 'show' : '' }}" id="menuFinance">
+                        <ul class="nav flex-column submenu">
+                            <li>
+                                <a href="{{ route('admin.paiements.index') }}" class="nav-link">Paiements</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.paiements.index') }}" class="nav-link {{ request()->routeIs('admin.paiements.*') ? 'active' : '' }}">
-                        <i class="bi bi-wallet2"></i> Paiements
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('admin.notifications') }}" class="nav-link {{ request()->routeIs('admin.notifications*') ? 'active' : '' }}">
-                        <div>
-                            <i class="bi bi-bell"></i> Notifications
-                        </div>
+                        <i class="bi bi-bell"></i> 
+                        <span>Notifications</span>
                         @if(auth()->user()->unreadNotifications->count())
-                            <span class="badge bg-danger rounded-pill">{{ auth()->user()->unreadNotifications->count() }}</span>
+                            <span class="badge bg-danger rounded-pill ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
                         @endif
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.profil') }}" class="nav-link {{ request()->routeIs('admin.profil') ? 'active' : '' }}">
+                        <i class="bi bi-person-badge"></i> Mon Profil
+                    </a>
+                </li>
+
             </ul>
         </nav>
 
@@ -141,7 +249,7 @@
     </aside>
 
     <main class="main-content">
-        <div class="p-4">
+        <div class="p-4 pt-lg-4"> 
             @if(session('success'))
                 <div class="alert alert-success border-0 shadow-sm d-flex align-items-center">
                     <i class="bi bi-check-circle-fill me-2"></i>
@@ -155,5 +263,28 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const adminSidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('overlay');
+
+    // Fonction pour basculer le menu
+    function toggleSidebar() {
+        adminSidebar.classList.toggle('show');
+        overlay.classList.toggle('active');
+    }
+
+    mobileToggle.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+
+    // Fermer le menu si on clique sur un lien (sur mobile)
+    const navLinks = document.querySelectorAll('.sidebar .nav-link:not([data-bs-toggle="collapse"])');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if(window.innerWidth < 992) toggleSidebar();
+        });
+    });
+</script>
 </body>
 </html>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Panier;
 use App\Models\PanierItem;
 use App\Models\Produit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 // Contrôleur pour la gestion du panier d'un acheteur
@@ -61,6 +62,37 @@ class PanierController extends Controller
         return back()->with('success', 'Produit ajouté au panier');
     }
 
+    public function update(Request $request, $id)
+    {
+        $item = PanierItem::findOrFail($id);
+        $produit = $item->produit;
+        $nouvelleQuantite = $item->quantite;
+
+        // Cas 1 : Clic sur les boutons + ou -
+        if ($request->has('action')) {
+            if ($request->action === 'increase') {
+                $nouvelleQuantite++;
+            } elseif ($request->action === 'decrease' && $item->quantite > 1) {
+                $nouvelleQuantite--;
+            }
+        } 
+        // Cas 2 : Saisie manuelle au clavier
+        else {
+            $request->validate([
+                'quantite' => 'required|integer|min:1'
+            ]);
+            $nouvelleQuantite = $request->quantite;
+        }
+
+        // Vérification finale du stock
+        if ($nouvelleQuantite > $produit->stock) {
+            return back()->with('error', "Désolé, il ne reste que {$produit->stock} unités en stock.");
+        }
+
+        $item->update(['quantite' => $nouvelleQuantite]);
+
+        return back();
+    }
     /**
      * Supprime un produit du panier
      */

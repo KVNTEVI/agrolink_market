@@ -3,42 +3,66 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Utilisateur; // Import du modèle Utilisateur
-use App\Models\Produit;     // Import du modèle Produit
-use App\Models\Categorie;   // Import du modèle Catégorie
-use App\Models\Paiement;    // Import du modèle Paiement
+use App\Models\Utilisateur;
+use App\Models\Produit;
+use App\Models\Categorie;
+use App\Models\Paiement;
+use App\Models\Commande;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
-// Contrôleur principal pour la zone d'administration
 class AdminController extends Controller
 {
-    /**
-     * Applique les middlewares de sécurité.
-     */
     public function __construct()
     {
-        // Nécessite d'être connecté et d'avoir le rôle 'admin' pour toutes les actions
         $this->middleware(['auth', 'admin']);
     }
 
-    /**
-     * Affiche le tableau de bord de l'administrateur.
-     *
-     * @return \Illuminate\View\View
-     */
     public function dashboard()
     {
-        // Retourne la vue du tableau de bord avec les statistiques (cartes KPI) et données récentes
+        // Calcul du gain total de la plateforme (somme des commissions)
+        $revenusPlateforme = Commande::where('statut', 'payée')->sum('commission_montant');
+
         return view('admin.dashboard', [
-            // Compte le nombre total d'utilisateurs
             'totalUtilisateurs' => Utilisateur::count(), 
-            // Compte le nombre total de produits
             'totalProduits' => Produit::count(),     
-            // Compte le nombre total de catégories
             'totalCategories' => Categorie::count(),   
-            // Compte le nombre total de paiements enregistrés
-            'totalPaiements' => Paiement::count(),    
-            // On récupère les 5 derniers utilisateurs pour l'affichage avec leur rôle
+            'totalPaiements' => Paiement::count(),
+            'revenusPlateforme' => $revenusPlateforme, // Nouvelle variable
             'utilisateursRecents' => Utilisateur::with('role')->latest()->limit(5)->get(),
         ]);
     }
+
+    public function profil()
+{
+    $user = Auth::user();
+    return view('admin.profil', compact('user'));
+}
+
+public function updateProfil(Request $request)
+{
+     /** @var \App\Models\Utilisateur $user */
+    $user = Auth::user();
+    
+    $request->validate([
+        'nom' => 'required|string|max:255',
+        'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
+
+    $user->nom = $request->nom;
+    $user->email = $request->email;
+    $user->telephone = $request->telephone;
+
+    if ($request->hasFile('image')) {
+        $imageName = time().'.'.$request->image->extension();
+        $request->image->move(public_path('images/utilisateurs'), $imageName);
+        $user->image = $imageName;
+    }
+
+    $user->save();
+    return back()->with('success', 'Profil mis à jour avec succès.');
+}
 }

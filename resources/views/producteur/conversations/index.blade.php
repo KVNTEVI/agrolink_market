@@ -9,7 +9,7 @@
     <div class="row mb-4 align-items-center">
         <div class="col">
             <h4 class="fw-bold text-success mb-1">Négociations en cours</h4>
-            <p class="text-muted small mb-0"><i class="bi bi-chat-dots text-success me-1"></i> Discutez des prix et concluez vos ventes</p>
+            <p class="text-dark small mb-0"><i class="bi bi-chat-dots text-success me-1"></i> Discutez des prix et concluez vos ventes</p>
         </div>
         <div class="col-auto">
             <div class="bg-white p-2 px-3 rounded-3 shadow-sm border border-light">

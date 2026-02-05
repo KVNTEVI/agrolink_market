@@ -10,7 +10,7 @@
             <p class="text-muted small mb-0">Bienvenue sur votre espace AgroLink Market</p>
         </div>
         <div class="text-muted small bg-white p-2 px-3 border rounded-4 shadow-sm d-inline-block">
-            <i class="bi bi-clock-history me-2 text-success"></i>Dernière activité : {{ now()->format('H:i') }}
+            <i class="bi bi-calendar3 me-2 text-success"></i>{{ Carbon\Carbon::now()->translatedFormat('d F Y') }}
         </div>
     </div>
 

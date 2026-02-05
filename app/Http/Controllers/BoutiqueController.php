@@ -40,7 +40,7 @@ class BoutiqueController extends Controller
             // 4. Tri et Pagination
             // Affiche les produits les plus récents en premier et limite à 10 par page.
             ->latest()
-            ->paginate(10);
+            ->paginate(9);
 
         // 5. Récupération de toutes les catégories pour les afficher dans la barre latérale/filtre.
         $categories = Categorie::all();

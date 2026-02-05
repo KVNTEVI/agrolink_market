@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Producteur;
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // Importé pour sécuriser la transaction
+use Illuminate\Support\Facades\DB; 
 
 class CommandeController extends Controller
 {

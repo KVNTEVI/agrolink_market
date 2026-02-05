@@ -21,6 +21,7 @@
             height: 100vh;
             box-shadow: 4px 0 10px rgba(0,0,0,0.02);
             z-index: 1050;
+            transition: transform 0.3s ease; /* Ajouté pour l'animation */
         }
 
         /* Liens de navigation style Admin */
@@ -68,12 +69,56 @@
             margin-bottom: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
+
+        /* AJOUTS RESPONSIVE (Strictement comme l'Admin) */
+        .mobile-admin-bar {
+            display: none;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 10px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-admin-bar { 
+                display: flex; 
+                align-items: center; 
+                justify-content: space-between;
+            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.4);
+                z-index: 1045;
+            }
+            .sidebar-overlay.active { display: block; }
+        }
     </style>
 </head>
 <body>
 
+<div class="mobile-admin-bar shadow-sm">
+    <button class="navbar-toggler border-0" type="button" id="mobile-toggle">
+        <i class="bi bi-list fs-2 text-success"></i>
+    </button>
+    <span class="fw-bold text-success">Producteur AgroLink</span>
+    <div style="width: 40px;"></div>
+</div>
+
+<div class="sidebar-overlay" id="overlay"></div>
+
 <div class="wrapper">
-    <aside class="sidebar d-flex flex-column">
+    <aside class="sidebar d-flex flex-column" id="producerSidebar">
         <div class="p-4 border-bottom text-center">
             <div class="text-success fw-bold fs-5 mb-3" style="letter-spacing: 1px;">
                 <i class="bi bi-shop"></i> Producteur
@@ -144,14 +189,13 @@
     </aside>
 
     <main class="main-content">
-        
         <div class="p-4">
-            @if(session('success'))
+            <!-- @if(session('success'))
                 <div class="alert alert-success border-0 shadow-sm d-flex align-items-center">
                     <i class="bi bi-check-circle-fill me-2"></i>
                     {{ session('success') }}
                 </div>
-            @endif
+            @endif -->
 
             @yield('content')
         </div>
@@ -159,6 +203,21 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Gestion de la sidebar (Hamburger)
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const producerSidebar = document.getElementById('producerSidebar');
+    const overlay = document.getElementById('overlay');
+
+    function toggleSidebar() {
+        producerSidebar.classList.toggle('show');
+        overlay.classList.toggle('active');
+    }
+
+    if(mobileToggle) mobileToggle.addEventListener('click', toggleSidebar);
+    if(overlay) overlay.addEventListener('click', toggleSidebar);
+</script>
 
 @auth
 <script>

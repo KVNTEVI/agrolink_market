@@ -14,6 +14,21 @@
 
 {{-- SECTION STYLISÉE --}}
 <section class="py-5" style="background-color: rgba(25, 135, 84, 0.05);">
+
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="{{ route('magazin.index') }}" method="GET" class="d-flex shadow-sm rounded-pill overflow-hidden bg-white border">
+                    <input type="text" name="search" class="form-control border-0 px-4 py-2" 
+                        placeholder="Rechercher un producteur..." value="{{ request('search') }}">
+                    <button class="btn btn-success px-4" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row g-4">
 
@@ -60,6 +75,9 @@
                 </div>
             @endforelse
 
+        </div>
+        <div class="d-flex justify-content-center mt-5">
+            {{ $producteurs->appends(request()->query())->links('pagination::bootstrap-4') }}
         </div>
     </div>
 </section>
@@ -122,6 +140,31 @@
     .producer-card h5 {
         letter-spacing: -0.5px;
     }
+
+    /* Masquer le texte "Showing X to Y of Z results" */
+.pagination nav div:first-child p.text-muted {
+    display: none !important;
+}
+
+/* Personnalisation de la pagination en vert */
+.pagination .page-link {
+    color: #198754 !important; /* Vert success */
+    border-radius: 8px !important;
+    margin: 0 3px;
+    border-color: #dee2e6;
+    background-color: white;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: white !important;
+}
+
+.pagination .page-link:hover {
+    background-color: #f0fdf4;
+    color: #146c43 !important;
+}
 </style>
 
 @endsection

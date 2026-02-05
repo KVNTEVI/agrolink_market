@@ -8,11 +8,12 @@
     {{-- EN-TÊTE HARMONISÉ --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1">Tableau de bord producteur</h4>
-            <p class="text-muted small mb-0">Vue générale de votre activité AgroLink</p>
+            <h4 class="fw-bold mb-1 text-success">Tableau de bord producteur</h4>
+            <p class="text-dark small mb-0">Vue générale de votre activité AgroLink</p>
         </div>
-        <div class="text-muted small">
-            <i class="bi bi-clock-history me-2"></i>Dernière activité : {{ now()->format('H:i') }}
+
+        <div class="text-muted small bg-white p-2 px-3 border rounded-4 shadow-sm d-inline-block">
+            <i class="bi bi-calendar3 me-2 text-success"></i>{{ Carbon\Carbon::now()->translatedFormat('d F Y') }}
         </div>
     </div>
 
@@ -78,9 +79,11 @@
     <div class="row g-4">
         {{-- COLONNE GAUCHE --}}
         <div class="col-lg-7">
-            {{-- ACTIONS RAPIDES --}}
+            {{-- ACTIONS RAPIDES (En-tête Noir) --}}
             <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
-                <div class="card-header bg-white fw-bold border-0 py-3 text-dark">Actions rapides</div>
+                <div class="card-header bg-dark text-white fw-bold py-3">
+                    <i class="bi bi-lightning-charge me-2"></i>Actions rapides
+                </div>
                 <div class="card-body bg-light bg-opacity-50">
                     <div class="row g-2">
                         <div class="col-6">
@@ -99,12 +102,12 @@
                 </div>
             </div>
 
-            {{-- ALERTES STOCK --}}
+            {{-- ALERTES STOCK (En-tête Noir) --}}
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                <div class="card-header bg-white fw-bold border-0 py-3 text-danger d-flex align-items-center">
-                    <i class="bi bi-exclamation-triangle me-2"></i> Alertes Stock
+                <div class="card-header bg-dark text-white fw-bold py-3 d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle me-2 text-danger"></i> Alertes Stock
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 bg-white">
                     <div class="list-group list-group-flush">
                         @forelse($alertesStock as $produit)
                             <div class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom py-3">
@@ -129,13 +132,13 @@
 
         {{-- COLONNE DROITE --}}
         <div class="col-lg-5">
-            {{-- COMMANDES RÉCENTES --}}
+            {{-- COMMANDES RÉCENTES (En-tête Noir) --}}
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                <div class="card-header bg-white fw-bold border-0 py-3 d-flex justify-content-between align-items-center">
-                    <span>Commandes récentes</span>
-                    <a href="{{ route('producteur.commandes.index') }}" class="btn btn-sm btn-light rounded-pill px-3">Voir tout</a>
+                <div class="card-header bg-dark text-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-cart3 me-2"></i>Commandes récentes</span>
+                    <a href="{{ route('producteur.commandes.index') }}" class="btn btn-sm btn-outline-light rounded-pill px-3" style="font-size: 0.7rem;">Voir tout</a>
                 </div>
-                <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush bg-white">
                     @forelse($commandesRecentes as $cmd)
                         <div class="list-group-item border-0 border-bottom py-3 hvr-light">
                             <div class="d-flex justify-content-between mb-1">
@@ -170,6 +173,8 @@
     }
     .hvr-light:hover { background-color: #f8f9fa; }
     .card { transition: transform 0.2s ease; }
+    /* Optionnel : adoucir le noir de l'en-tête pour coller au style moderne */
+    .bg-dark { background-color: #1a1d20 !important; }
 </style>
 
 @endsection

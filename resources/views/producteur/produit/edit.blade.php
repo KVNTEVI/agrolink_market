@@ -22,6 +22,18 @@
                             <input type="text" name="nom" class="form-control bg-light border-0" value="{{ $produit->nom }}" required>
                         </div>
 
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Catégorie</label>
+                            <select name="categorie_id" class="form-select bg-light border-0" required>
+                                @foreach($categories as $categorie)
+                                    <option value="{{ $categorie->id_categorie }}" 
+                                        {{ $produit->categorie_id == $categorie->id_categorie ? 'selected' : '' }}>
+                                        {{ $categorie->nom }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Prix (FCFA)</label>
                             <input type="number" name="prix_unitaire" class="form-control bg-light border-0" value="{{ $produit->prix_unitaire }}" required>
